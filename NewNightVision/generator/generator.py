@@ -126,15 +126,26 @@ def transform_annotations(boxes):
     annotations = {'labels': np.empty((0,)), 'bboxes': np.empty((0, 4))}
     
     for i in range(len(boxes)):
+        
+        #boxes= np.array(boxes)
+        
+        if len(boxes[i]) < 2 :
+            annotations['labels'] = np.concatenate((annotations['labels'], [np.array(boxes[i][0][-1])]))
+            annotations['bboxes'] = np.concatenate((annotations['bboxes'], 
+                                                    [[boxes[i][0][0],boxes[i][0][1],boxes[i][0][2],boxes[i][0][3]]]))
+        elif len(boxes[i] ) >= 2:
+            for j in range(len(boxes[i])):
+                annotations['labels'] = np.concatenate((annotations['labels'], [np.array(boxes[i][j][-1])]))
 
-        annotations['labels'] = np.concatenate((annotations['labels'], annotations[i][-1])
-        annotations['bboxes'] = np.concatenate((annotations['bboxes'], [[annotations[0]
-                float(annot['x1']),
-                float(annot['y1']),
-                float(annot['x2']),
-                float(annot['y2']),
-            ]]))
-    
+                annotations['bboxes'] = np.concatenate((annotations['bboxes'], 
+                                                        [[boxes[i][j][0],boxes[i][j][1],boxes[i][j][2],boxes[i][j][3]]]))
+        
+    return annotations
+
+boxes = annotations
+
+result = transform_annotations(boxes)
+                                                    
    
 lista = [1,2,3,4]
 path = r'C:\Users\alexandru.vesa\Desktop\Research\New_Personal_Program_DL_Programming\NewNightVision\img_train.csv'
@@ -144,5 +155,4 @@ imgs, annotations  = dg.getData(lista)
 
 image_batch = compute_inputs(imgs)
 
-annotations2 = annotations[0] *4
-batches = compute_targets(imgs, annotations2)
+batches = compute_targets(imgs, result)

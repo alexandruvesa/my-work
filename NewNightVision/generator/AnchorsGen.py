@@ -64,11 +64,11 @@ def anchor_targets_bbox(
                       last column defines anchor states (-1 for ignore, 0 for bg, 1 for fg).
     """
 
-    assert(len(image_group) == len(annotations_group)), "The length of the images and annotations need to be equal."
+    #assert(len(image_group) == len(annotations_group)), "The length of the images and annotations need to be equal."
     assert(len(annotations_group) > 0), "No data received to compute anchor targets for."
-    for annotations in annotations_group:
-        assert('bboxes' in annotations), "Annotations should contain bboxes."
-        assert('labels' in annotations), "Annotations should contain labels."
+    #for annotations in annotations_group:
+    #    assert('bboxes' in annotations), "Annotations should contain bboxes."
+    #    assert('labels' in annotations), "Annotations should contain labels."
 
     batch_size = len(image_group)
 
