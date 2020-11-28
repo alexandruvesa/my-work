@@ -91,7 +91,7 @@ def modificareTabel1(path):
     
     ProiectiiFinaleInvestitie['C56'] = "='1B-ContPP'!C28"
     ProiectiiFinaleInvestitie['C57'] ="='1B-ContPP'!C29 "
-    ProiectiiFinaleInvestitie['C58']="='1B-ContPP'!C51"
+    ProiectiiFinaleInvestitie['C58']="='1B-ContPP'!C31"
     
     ProiectiiFinaleInvestitie['C64'] = "='3A-Proiectii_fin_investitie'!D77/1.19"
     ProiectiiFinaleInvestitie['D64'] = "='3A-Proiectii_fin_investitie'!E77/1.19"
@@ -647,7 +647,9 @@ def modificareTabel1(path):
     ProiectiiInvestitieSim['F138'] = '=F136 + F137'
     ProiectiiInvestitieSim['G138'] = '=G136 + G137'
  
-    
+    #Investitie 
+    ProiectiiInvestitieSim['D128'] =  "='2B-Investitie'!C24"   
+ 
     pathSave= path.split("\\")[-1].split('.')[0] + "completed.xlsx"
     
     pathSaveFinal= path.split("\\")[-1].split('.')[0] + "FINAL.xlsx"
@@ -662,7 +664,7 @@ def modificareTabel1(path):
     
     
     workbook=xw.App(visible=False)
-    workbook = xw.Book( r'C:\Users\alexandru.vesa\Desktop\Research\New_Personal_Program_DL_Programming\GitMy\my-work\FinanciaApplication\Test\proteincompleted.xlsx' )
+    workbook = xw.Book( r'C:\Users\alexandru.vesa\Desktop\Research\New_Personal_Program_DL_Programming\GitMy\my-work\FinanciaApplication\21.11.20\Sidecompleted.xlsx' )
     
     app=xw.apps.active
 
