@@ -1,0 +1,68 @@
+(function(w, d) {
+  try {
+    d = w.top.document || d; w = w.top.document ? w.top : w;
+  } catch (e) {}
+  var ttag = function() {
+    w.teads.page(108755).placement(118212, {slider: {allow_corner_position: false, allow_top_position: false}, "css":"margin: 0px auto 0px; max-width: 550px;","callbacks":{"AdLoaded":function () {var teadsClickButton = window.top.document.querySelector(".teads-player > iframe").contentWindow.document.querySelector(".teads-ui-component-clickbutton");
+if (teadsClickButton) { teadsClickButton.remove(); }},"AdVideoStart":function () {var teadsClickButton = window.top.document.querySelector(".teads-player > iframe").contentWindow.document.querySelector(".teads-ui-component-clickbutton");
+if (teadsClickButton) { teadsClickButton.remove(); }}},"format":"inread","slot":{"insertInside":true,"btf":false,"selector":"#hl-incontent-video-ad","minimum":1}}).passback(function passback() { (function() {
+   function loadIt() {
+     console.log("DOM fully loaded and parsed");
+     // Enter OutStream configuration options HERE //
+     var configParams = {
+       "width": 640,
+       "height": 360,
+       "k_pos": "after",
+       "k_placement": "g/#hl-incontent-video-ad",
+       "k_align": "center",
+       "k_passback": "myPassback"
+     };
+     // End OutStream configuration options //
+     var doc = top.window.document;
+     var as = doc.createElement('script'),
+       aT = '//video-ads-apex.rubiconproject.com/apex/11314/76668/361510/203/apex.js?r=' + Math.random() * 10000000000000000;
+     as.type = 'text/javascript';
+     as.src = aT;
+     as.async = true;
+     if (as.textContent) {
+       as.textContent = JSON.stringify(configParams);
+     } else {
+       as.innerText = JSON.stringify(configParams);
+     }
+     doc.body.appendChild(as);
+         // Begin passback function //
+         top.window.myPassback = function (passbackContainer) {
+           // insert callback function here
+           console.log("Call passback", passbackContainer);
+           var passbackCode = '<script src="//go.aniview.com/api/adserver61/vast/?AV_PUBLISHERID=5c62d8ee073ef46ac74785ca&AV_CHANNELID=5c63e88028a061214a0151b1&logo=false&vpaid=js&skip=true&skiptimer=5" async="true"><' + '/script>';
+           
+           if (passbackContainer) {
+             var scrpt = window.top.document.createElement('script');
+             scrpt.type = 'text/javascript';
+             scrpt.src = 'https://cdnjs.cloudflare.com/ajax/libs/postscribe/2.0.6/postscribe.min.js';
+             scrpt.onload = function () {
+               window.top.postscribe(passbackContainer, passbackCode, {
+                 done: function() { console.log('Passback has been added'); }
+               });
+             };
+             passbackContainer.parentNode.insertBefore(scrpt, passbackContainer);
+           }
+         };
+         // end of passback function
+   }
+   if (document.readyState === "complete" || (document.readyState !== "loading" && !document.documentElement.doScroll)) {
+     loadIt();
+   } else {
+     document.addEventListener("DOMContentLoaded", loadIt);
+   }
+ }());}).serve();
+  };
+  if (w.teads && w.teads.page) { ttag(); }
+  else if (!w.teadsscript) {
+    var s = document.createElement('script');
+    s.src = 'https://s8t.teads.tv/media/format/v3/teads-format.min.js';
+    s.async = true; s.onload = ttag; w.teadsscript = d.getElementsByTagName('head')[0].appendChild(s);
+  } else {
+    w.teadsscript.addEventListener('load', ttag);
+  }
+})(window, document);

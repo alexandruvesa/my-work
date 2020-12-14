@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/6894371.js" type="text/javascript" id="cookieBanner-6894371" data-cookieconsent="ignore" data-loader="hs-scriptloader" data-hsjs-portal="6894371" data-hsjs-env="prod"></script><script src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/6894371_003.js" type="text/javascript" id="hs-analytics"></script><script type="text/javascript" async="" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/conversion_async.js"></script><script type="text/javascript" async="" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/analytics.js"></script><script type="text/javascript" async="" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/mn8nr7shyr3f.js"></script><script async="" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/gtm.js"></script><script type="text/javascript">
+    var dataLayer = window.dataLayer = window.dataLayer || [];
+    dataLayer.push({
+      'useGtm': true
+    });
+    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-5WP6G4');</script>
+    <!-- End Google Tag Manager -->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>How to Build a COVID-19 Classifier Using PyTorch | Paperspace Blog</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/screen.css">
+
+    <meta name="description" content="This is a step-by-step tutorial for building a COVID-19 classifier from chest CT scans using PyTorch.">
+    <link rel="icon" href="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/favicon.png" type="image/png">
+    <link rel="canonical" href="https://blog.paperspace.com/fighting-coronavirus-with-ai-building-covid-19-classifier/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://blog.paperspace.com/fighting-coronavirus-with-ai-building-covid-19-classifier/amp/">
+    
+    <meta property="og:site_name" content="Paperspace Blog">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="How to Build a COVID-19 Classifier Using PyTorch | Paperspace Blog">
+    <meta property="og:description" content="Using PyTorch, we create a COVID-19 classifier that predicts whether a patient is suffering from coronavirus or not, using chest CT scans of different patients.">
+    <meta property="og:url" content="https://blog.paperspace.com/fighting-coronavirus-with-ai-building-covid-19-classifier/">
+    <meta property="og:image" content="https://blog.paperspace.com/content/images/2020/05/photo-1584254520678-31fe4dce5306.jpeg">
+    <meta property="article:published_time" content="2020-07-06T11:16:00.000Z">
+    <meta property="article:modified_time" content="2020-07-06T15:48:40.000Z">
+    <meta property="article:tag" content="Coronavirus">
+    <meta property="article:tag" content="PyTorch">
+    <meta property="article:tag" content="Medical Imaging">
+    <meta property="article:tag" content="Computer Vision">
+    <meta property="article:tag" content="Deep Learning">
+    
+    <meta property="article:publisher" content="https://www.facebook.com/HelloPaperspace/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Build a COVID-19 Classifier Using PyTorch | Paperspace Blog">
+    <meta name="twitter:description" content="Using PyTorch, we create a COVID-19 classifier that predicts whether a patient is suffering from coronavirus or not, using chest CT scans of different patients.">
+    <meta name="twitter:url" content="https://blog.paperspace.com/fighting-coronavirus-with-ai-building-covid-19-classifier/">
+    <meta name="twitter:image" content="https://blog.paperspace.com/content/images/2020/05/photo-1584254520678-31fe4dce5306.jpeg">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Ayoosh Kathuria">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Coronavirus, PyTorch, Medical Imaging, Computer Vision, Deep Learning">
+    <meta name="twitter:site" content="@hellopaperspace">
+    <meta property="og:image:width" content="1351">
+    <meta property="og:image:height" content="901">
+    
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Paperspace Blog",
+        "url": "https://blog.paperspace.com/",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://blog.paperspace.com/content/images/2018/07/Paperspace-Circle2.png"
+        }
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Ayoosh Kathuria",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://blog.paperspace.com/content/images/2018/04/index.png",
+            "width": 401,
+            "height": 450
+        },
+        "url": "https://blog.paperspace.com/author/ayoosh/",
+        "sameAs": []
+    },
+    "headline": "How to Build a COVID-19 Classifier Using PyTorch | Paperspace Blog",
+    "url": "https://blog.paperspace.com/fighting-coronavirus-with-ai-building-covid-19-classifier/",
+    "datePublished": "2020-07-06T11:16:00.000Z",
+    "dateModified": "2020-07-06T15:48:40.000Z",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://blog.paperspace.com/content/images/2020/05/photo-1584254520678-31fe4dce5306.jpeg",
+        "width": 1351,
+        "height": 901
+    },
+    "keywords": "Coronavirus, PyTorch, Medical Imaging, Computer Vision, Deep Learning",
+    "description": "Using PyTorch, we create a COVID-19 classifier that predicts whether a patient is suffering from coronavirus or not, using chest CT scans of different patients. ",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://blog.paperspace.com/"
+    }
+}
+    </script>
+
+    <meta name="generator" content="Ghost 3.38">
+    <link rel="alternate" type="application/rss+xml" title="Paperspace Blog" href="https://blog.paperspace.com/rss/">
+    <!-- Font reset -->
+<link href="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/css.css" rel="stylesheet">
+<style>
+  body { font-family: 'Inter', sans-serif; }
+  .post-card-title { font-weight: 700; line-height: 1.25em; letter-spacing: -0.02em; } 
+</style>
+
+
+<!-- 
+GTM snippets we added directly to the default.hbs file in the blog template, 
+see the Design section to export active template if GTM tracking requires adjustment
+-->
+<script>
+try {
+    if(dataLayer[0]['useGtm'] == false){
+        console.log('using GA snippet');
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-57547030-1', 'auto');
+        ga('send', 'pageview');
+    } else {
+        console.log('using GTM snippet');
+    }
+} catch(err){
+    console.log(err);
+}
+</script>
+
+
+<script type="text/javascript" async="" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/MathJax.js">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [["$", "$"], ["\\(", "\\)"]],
+        displayMath: [['$$','$$'], ['\[','\]']],
+        processEscapes: true
+    }
+});
+</script>
+
+
+
+<!-- Start of Async Drift Code -->
+<script>
+"use strict";
+
+!function() {
+  var t = window.driftt = window.drift = window.driftt || [];
+  if (!t.init) {
+    if (t.invoked) return void (window.console && console.error && console.error("Drift snippet included twice."));
+    t.invoked = !0, t.methods = [ "identify", "config", "track", "reset", "debug", "show", "ping", "page", "hide", "off", "on" ], 
+    t.factory = function(e) {
+      return function() {
+        var n = Array.prototype.slice.call(arguments);
+        return n.unshift(e), t.push(n), t;
+      };
+    }, t.methods.forEach(function(e) {
+      t[e] = t.factory(e);
+    }), t.load = function(t) {
+      var e = 3e5, n = Math.ceil(new Date() / e) * e, o = document.createElement("script");
+      o.type = "text/javascript", o.async = !0, o.crossorigin = "anonymous", o.src = "https://js.driftt.com/include/" + n + "/" + t + ".js";
+      var i = document.getElementsByTagName("script")[0];
+      i.parentNode.insertBefore(o, i);
+    };
+  }
+}();
+drift.SNIPPET_VERSION = '0.3.1';
+drift.load('mn8nr7shyr3f');
+</script>
+<!-- End of Async Drift Code -->
+
+
+
+<!-- Syntax highlighting w/ Highlight.js-->
+<link rel="stylesheet" href="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/monokai-sublime.css">
+<script src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/highlight.js"></script>
+
+
+<!-- Ghost Hunter for search -->
+<script>
+  var ghosthunter_key = '7f8c8f598ab55fc5195ab6a9a1';
+  //optional: set your custom ghost_root url, default is `"/ghost/api/v2"`
+  var ghost_root_url = "/ghost/api/v3"
+</script>
+
+
+<!-- Ghost Finder for search -->
+<style>
+input#search-field {
+    color: black;
+    background-color: #d8d8d8;
+    height: 45px;
+    border-radius: 250px;
+    padding-left: 25px;
+}
+.search-block {
+	position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.search-results {
+    /* height: 100vh; */
+    width: 100vw;
+    padding: 50px 100px 0 100px;
+    max-width: 1200px;
+}
+.search-wrapper {
+    margin-top: -78px;
+    margin-bottom: 35px;
+}
+button.search-reset {
+    margin-left: 171px;
+    background-color: #cecece;
+    border-radius: 100px;
+    padding: 2px 10px 2px 10px;
+    position: absolute;
+}
+input#search-input:focus {
+    background-color: white;
+}
+.search-btn {
+    display: none;
+}
+/* Mobile tweaks */
+    @media only screen and (max-width: 450px) {
+  input#search-input {
+  	height: 35px;
+    margin-top: 18px;
+  }
+  button.search-reset {
+    margin-left: 198px;
+  }
+  .search-results-wrapper {
+  	padding: 50px 40px 0 40px;
+  }
+  .search-wrapper {
+    margin-top: -20px;
+    margin-bottom: 20px;
+  }
+}
+</style>
+
+    
+
+
+
+<!-- Signup CTA-->
+<style>
+.speed-and-simplicity-card {
+    position: relative;
+    overflow: hidden;
+    margin-top: 17px;
+    margin-bottom: 50px;
+    padding: 55px 55px 55px 65px;
+    border-radius: 12px;
+    background-image: linear-gradient(180deg, rgba(255, 0, 81, .16), rgba(255, 0, 119, .3)), linear-gradient(210deg, hsla(213.41176470588235, 100.00%, 50.00%, 0.94), rgba(255, 0, 81, .75));
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, .13), 0 20px 30px 0 rgba(0, 0, 0, .15);
+    -webkit-transition: all 200ms ease;
+    transition: all 200ms ease;
+}
+.speed-simplicity-card-header-wrapper {
+    max-width: 60%;
+    margin-bottom: -14px;
+}
+.speed-simplicity-card-header-t {
+    font-family: 'Gt walsheim', sans-serif;
+    color: #fff;
+    font-size: 23px;
+    line-height: 35px;
+    font-weight: 800;
+}
+.button.white-bg.red {
+    padding: 8px 24px 8px 24px;
+}
+.button.white-bg {
+    background-color: #fff;
+    box-shadow: 0 4px 15px -2px hsla(213.41176470588235, 100.00%, 31.33%, 0.20);
+    -webkit-transition-property: all;
+    transition-property: all;
+    color: #5649b1;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    }
+.button {
+    margin-top: 25px;
+    padding: 8px 24px;
+    border-radius: 4px;
+    background-color: hsla(213.41176470588235, 100.00%, 50.00%, 1.00);
+    -webkit-transition: all 200ms ease;
+    transition: all 200ms ease;
+    font-family: 'Gt walsheim', sans-serif;
+    color: #fff;
+    font-size: 16px;
+    line-height: 30px;
+    font-weight: 800;
+}
+.w-button {
+    display: inline-block;
+    padding: 9px 15px;
+    background-color: #3898EC;
+    color: white;
+    border: 0;
+    line-height: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 0;
+}
+.button.cc-cta.ctasales.footer-card {
+    margin-top: 20px;
+    margin-left: 20px;
+    padding: 7.5px 24px;
+    border-color: hsla(222.66666666666669, 0.00%, 100.00%, 1.00);
+    -webkit-transition-property: all;
+    transition-property: all;
+    color: hsla(222.66666666666669, 0.00%, 100.00%, 1.00);
+    font-weight: 400;
+    text-transform: uppercase;
+    box-shadow: none;
+}
+.button.cc-cta.ctasales {
+    margin-right: 16px;
+    border-style: solid;
+    border-width: 1.5px;
+    border-color: hsla(222.66666666666669, 78.26%, 54.90%, 1.00);
+    background-color: transparent;
+    font-family: 'Gt walsheim', sans-serif;
+    color: hsla(222.66666666666669, 78.26%, 54.90%, 1.00);
+}
+.speed-simplicity-img {
+    position: absolute;
+    left: auto;
+    top: auto;
+    right: 0%;
+    bottom: 0%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    width: 35%;
+    height: 75%;
+    border-top-left-radius: 12px;
+    background-image: url(https://assets.website-files.com/5cad0999832adc23a260edba/5cad0999832adc0df860ef2b_jupyter-notebook-no-wrap2.jpg);
+    background-position: -10px 0%;
+    background-size: 150%;
+    background-repeat: no-repeat;
+    box-shadow: 0 20px 30px 0 rgba(0, 0, 0, .1), 0 0 8px 0 rgba(0, 0, 0, .13);
+}
+@media screen and (max-width: 900px) {
+.speed-simplicity-img {
+    display: none;
+    }
+.speed-and-simplicity-card	{
+    padding: 35px 36px 44px !important;
+    }
+.speed-simplicity-card-header-wrapper {
+    max-width: 100%;
+	}
+.button.white-bg {
+    width: 100%;
+    text-align: center;
+	}
+.button.cc-cta.ctasales.footer-card {
+    width: 100%;
+    margin-top: 20px;
+    margin-left: 0px;
+    text-align: center;
+	}
+}
+</style>
+
+<!-- Run on Gradient CTA -->
+<style>
+.rog-card {
+    width: 100%;
+    padding: 21px 25px 23px;
+    border-radius: 12px;
+    background-image: -webkit-gradient(linear, left bottom, left top, from(#5655f6), to(#8d5cf6));
+    background-image: linear-gradient(0deg, #5655f6, #8d5cf6);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, .13), 0 20px 30px 0 rgba(0, 0, 0, .15);
+    margin-bottom: 50px;
+    margin-top: 17px;
+}
+@media screen and (max-width: 479px) {
+.w-col {
+    width: 100% !important;
+    }
+.w-col-7 {
+    width: 100% !important;
+	}
+}
+.rog-columns {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    line-height: 1.6em;
+}
+.w-container .w-row {
+    margin-left: -10px;
+    margin-right: -10px;
+}
+.w-col-7 {
+    max-width: 55%;
+}
+.w-col {
+    position: relative;
+    min-height: 1px;
+}
+.w-col-5 {
+    max-width: 40%;
+}
+.rog-heading {
+    margin-top: 10px !important;
+    margin-bottom: 10px !important;
+    font-family: 'Gt walsheim', sans-serif;
+    color: #fff;
+    font-size: 1.25em;
+    font-weight: 800;
+    text-align: left;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.19);
+}
+@media screen and (max-width: 479px) {
+.rog-heading {
+    font-size: 22px;
+    }
+}
+.rog-button {
+    padding: 14px 28px;
+    background-color: #fff !important;
+    -webkit-transition: all 200ms ease;
+    transition: all 200ms ease;
+    font-family: 'Gt walsheim', sans-serif;
+    color: #5655f6 !important;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+}
+@media screen and (max-width: 479px) {
+.rog-button {
+    display: block;
+    padding: 14px 10px;
+    line-height: 1.3em;
+    }
+}
+.rog-button:hover {
+    box-shadow: 0 3px 8px 1px rgba(255, 0, 196, 0.49);
+}
+</style>
+
+
+<!-- Customer Story Pullquote -->
+<style>
+.customer-pullquote-container {
+  display: grid;
+  align-items: center;
+  background-color: #fff;
+  border: 3px solid black;
+  border-radius: 5px;
+}
+
+.customer-pullquote-image {
+  grid-column-start: 1;
+  grid-column-end: 2;
+  padding: 25px;
+}
+
+.customer-pullquote-image img {
+  max-height: 250px;
+  width: auto;
+  border-radius: 10px;
+}
+
+.customer-pullquote-quote {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  padding: 25px;
+  font-family: 'Gt walsheim', sans-serif;
+  color: black;
+  font-size: 16px;
+  font-weight: 200;
+  text-align: left;
+}
+
+.customer-pullquote-quote-attribution {
+  font-size: 20px;
+  font-weight: 400;
+}
+    
+.logo-learn-more-container {
+    display: grid;
+    align-items: center;
+    border: 3px solid #fff;
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.logo-learn-more-logo {
+    grid-column-start: 1;
+    grid-column-end: 1;
+    justify-self: center;
+    padding: 10px;
+}
+
+.logo-learn-more-logo img {
+  max-width: 100px;
+}
+    
+.logo-learn-more-text {
+    grid-column-start: 2;
+    grid-column-end: 6;
+    font-style: italic;
+}
+   
+@media screen and (max-width: 900px) {
+  .customer-pullquote-container {
+      grid-template-columns: 1;
+      grid-template-rows: 2;
+  }
+    
+  .customer-pullquote-image {
+      grid-column-start: 1;
+      grid-column-end: 1;
+      grid-row-start: 1;
+      grid-row-end: 1;
+  }
+    
+  .customer-pullquote-quote {
+      grid-column-start: 1;
+      grid-column-end: 1;
+      grid-row-start: 2;
+      grid-row-end: 2;
+  }
+}
+</style>
+
+
+<!-- Enable LaTex for mathematical expressions -->
+<link rel="stylesheet" href="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/katex.css" crossorigin="anonymous">
+<script defer="defer" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/katex.js" crossorigin="anonymous"></script>
+<script defer="defer" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/auto-render.js" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+<script type="text/javascript" async="" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/embed.js"></script><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style id="fit-vids-style">.fluid-width-video-container{flex-grow: 1;width:100%;}.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><script src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/a"></script></head>
+<body class="post-template tag-coronavirus tag-pytorch tag-medical-imaging tag-computer-vision tag-deep-learning"><div id="MathJax_Message" style="display: none;"></div>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5WP6G4"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <div class="site-wrapper">
+
+        
+
+<header class="site-header">
+    <div class="outer site-nav-main nav-post-title-active">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+            <a class="site-nav-logo" href="https://blog.paperspace.com/"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/Paperspace-Circle2.png" alt="Paperspace Blog"></a>
+        <div class="site-nav-content">
+                <ul class="nav">
+    <li class="nav-announcements"><a href="https://blog.paperspace.com/tag/announcement/">Announcements</a></li>
+    <li class="nav-tutorials"><a href="https://blog.paperspace.com/tag/tutorial/">Tutorials</a></li>
+    <li class="nav-dl"><a href="https://blog.paperspace.com/tag/deep-learning/">DL</a></li>
+    <li class="nav-ml"><a href="https://blog.paperspace.com/tag/machine-learning/">ML</a></li>
+    <li class="nav-cv"><a href="https://blog.paperspace.com/tag/computer-vision/">CV</a></li>
+    <li class="nav-nlp"><a href="https://blog.paperspace.com/tag/natural-language-processing/">NLP</a></li>
+    <li class="nav-3d"><a href="https://blog.paperspace.com/tag/3D/">3D</a></li>
+    <li class="nav-get-paid-to-write"><a href="https://blog.paperspace.com/write-for-paperspace/">💎 Get paid to write</a></li>
+    <li class="nav-sign-up"><a href="https://www.paperspace.com/account/signup">👉 Sign up</a></li>
+</ul>
+
+                <span class="nav-post-title ">Fighting Coronavirus with AI, Part 2: Building a CT Scan COVID-19 Classifier Using PyTorch</span>
+        </div>
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+                <a class="social-link social-link-fb" href="https://www.facebook.com/HelloPaperspace/" title="Facebook" target="_blank" rel="noopener"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c8.837 0 16 7.163 16 16s-7.163 16-16 16S0 24.837 0 16 7.163 0 16 0zm5.204 4.911h-3.546c-2.103 0-4.443.885-4.443 3.934.01 1.062 0 2.08 0 3.225h-2.433v3.872h2.509v11.147h4.61v-11.22h3.042l.275-3.81h-3.397s.007-1.695 0-2.187c0-1.205 1.253-1.136 1.329-1.136h2.054V4.911z"></path></svg></a>
+                <a class="social-link social-link-tw" href="https://twitter.com/hellopaperspace" title="Twitter" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+</a>
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://blog.paperspace.com/rss/" title="RSS" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+</div></header>
+
+
+<main id="site-main" class="site-main outer">
+    <div class="inner">
+
+        <article class="post-full post tag-coronavirus tag-pytorch tag-medical-imaging tag-computer-vision tag-deep-learning ">
+
+            <header class="post-full-header">
+
+                <section class="post-full-tags">
+                    <a href="https://blog.paperspace.com/tag/coronavirus/">Coronavirus</a>
+                </section>
+
+                <h1 class="post-full-title">Fighting Coronavirus with AI, Part 2: Building a CT Scan COVID-19 Classifier Using PyTorch</h1>
+
+                <p class="post-full-custom-excerpt">Using PyTorch, we 
+create a COVID-19 classifier that predicts whether a patient is 
+suffering from coronavirus or not, using chest CT scans of different 
+patients. </p>
+
+                <div class="post-full-byline">
+
+                    <section class="post-full-byline-content">
+
+                        <ul class="author-list">
+                            <li class="author-list-item">
+
+                                <div class="author-card">
+                                    <img class="author-profile-image" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/index.png" alt="Ayoosh Kathuria">
+                                    <div class="author-info">
+                                        <div class="bio">
+                                            <h2>Ayoosh Kathuria</h2>
+                                            <p>Currently, a research assistant at IIIT-Delhi working on representation learning in Deep RL. Ex - Mathworks, DRDO.</p>
+                                            <p><a href="https://blog.paperspace.com/author/ayoosh/">More posts</a> by Ayoosh Kathuria.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="https://blog.paperspace.com/author/ayoosh/" class="author-avatar">
+                                    <img class="author-profile-image" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/index.png" alt="Ayoosh Kathuria">
+                                </a>
+
+                            </li>
+                        </ul>
+
+                        <section class="post-full-byline-meta">
+                            <h4 class="author-name"><a href="https://blog.paperspace.com/author/ayoosh/">Ayoosh Kathuria</a></h4>
+                            <div class="byline-meta-content">
+                                <time class="byline-meta-date" datetime="2020-07-06">6 Jul 2020</time>
+                                <span class="byline-reading-time"><span class="bull">•</span> 18 min read</span>
+                            </div>
+                        </section>
+
+                    </section>
+
+
+                </div>
+            </header>
+
+            <figure class="post-full-image">
+                <img srcset="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/photo-1584254520678-31fe4dce5306_003.jpeg 300w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/photo-1584254520678-31fe4dce5306_004.jpeg 600w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/photo-1584254520678-31fe4dce5306.jpeg 1000w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/photo-1584254520678-31fe4dce5306_002.jpeg 2000w" sizes="(max-width: 800px) 400px,
+                        (max-width: 1170px) 1170px,
+                            2000px" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/photo-1584254520678-31fe4dce5306_002.jpeg" alt="Fighting Coronavirus with AI, Part 2: Building a CT Scan COVID-19 Classifier Using PyTorch">
+            </figure>
+
+            <section class="post-full-content">
+                <div class="post-content">
+                    <!--kg-card-begin: html--><div class="rog-card"><div class="rog-columns w-row"><div class="w-col w-col-7"><p class="rog-heading">Run it on Gradient</p></div><div class="column w-col w-col-5"><a href="https://console.paperspace.com/gcn-team/notebook/pr86bmca9" class="rog-button w-button">Run for free</a></div></div></div><!--kg-card-end: html--><p>You can follow along with the code for this tutorial and run it on a free GPU from the ML Showcase.</p><p>COVID-19
+ continues to wreak havoc on healthcare systems and economies around the
+ world. With more than 500,000 dead, 11.4 million diseased, and more 
+than a billion people put out of work, the COVID-19 pandemic is arguably
+ the biggest crisis of the 21st century. We are also witnessing the 
+world joining forces to fight the pandemic on an unprecedented 
+scale–whether it be expediting trials of vaccines, mass producing masks 
+and ventilators, or mammoth economic stimuli to keep countries going 
+during times of lockdown.</p><p>Having said that, I am sure the Machine 
+Learning community has a role to play. In fact, this is what this series
+ is all about. In <a href="https://blog.paperspace.com/fighting-corona-virus-with-ai-medical-imaging-testing/">the last part</a>,
+ I gave an overview of how Deep Learning is being used to develop better
+ ways for testing for COVID-19. All the literature that I covered used 
+medical data procured from hospitals which was not available in the 
+public domain, which made it hard to do any sort of tutorial. However, 
+that has since changed. </p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://blog.paperspace.com/fighting-corona-virus-with-ai-medical-imaging-testing/"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Improving Coronavirus Testing with Deep Learning | Paperspace Blog</div><div class="kg-bookmark-description">This
+ post will cover how testing is done for the coronavirus, why it’s 
+important in battling the pandemic, and how deep learning tools for 
+medical imaging can help us improve the quality of COVID-19 testing.</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/favicon.png"><span class="kg-bookmark-author">Ayoosh Kathuria</span><span class="kg-bookmark-publisher">Paperspace Blog</span></div></div><div class="kg-bookmark-thumbnail"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/photo-1585331505473-7586f9cb0854.jpeg"></div></a></figure><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://blog.paperspace.com/fighting-covid-19-using-artificial-intelligence-and-data/"><div class="kg-bookmark-content"><div class="kg-bookmark-title">A Review of Active COVID-19 Research and Datasets | Paperspace Blog</div><div class="kg-bookmark-description">The economy has come to a halt; people are quarantined; work is stagnating; and
+governments fear the public health crisis this could turn into. The deadly
+coronavirus (SARS-CoV-2, or COVID-19 for “coronavirus disease 2019”) is
+spreading fast. It’s 2020 but even with the most advanced technology avai…</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/favicon.png"><span class="kg-bookmark-author">Vihar Kurama</span><span class="kg-bookmark-publisher">Paperspace Blog</span></div></div><div class="kg-bookmark-thumbnail"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/corona-1.png"></div></a></figure><p>Recently,
+ the UC San Diego open sourced a dataset containing lung CT Scan images 
+of COVID-19 patients, the first of its kind in the public domain. In 
+this post we will use PyTorch to build a classifier that takes the lung 
+CT scan of a patient and classifies it as COVID-19 positive or negative.</p><p>So, let's get started!</p><h2 id="first-thing-s-first-">First thing's first... </h2><p>We
+ begin by importing the modules we will require for our code, setting up
+ the GPU, and setting up our TensorBoard directory to log our training 
+metrics. </p><pre><code class="hljs coffeescript"><span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn
+<span class="hljs-keyword">from</span> torch.utils.data <span class="hljs-keyword">import</span> Dataset, DataLoader
+<span class="hljs-keyword">from</span> torchvision <span class="hljs-keyword">import</span> transforms <span class="hljs-keyword">as</span> transforms
+<span class="hljs-keyword">from</span> skimage.util <span class="hljs-keyword">import</span> montage
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> cv2 
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt 
+<span class="hljs-keyword">import</span> torch.optim <span class="hljs-keyword">as</span> optim
+<span class="hljs-keyword">from</span> PIL <span class="hljs-keyword">import</span> Image
+<span class="hljs-keyword">from</span> sklearn.metrics <span class="hljs-keyword">import</span> classification_report, roc_auc_score, roc_curve, confusion_matrix
+<span class="hljs-keyword">from</span> torch.utils.tensorboard <span class="hljs-keyword">import</span> SummaryWriter
+<span class="hljs-keyword">import</span> glob
+<span class="hljs-keyword">import</span> shutil
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> torchvision.models <span class="hljs-keyword">import</span> vgg19_bn
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns
+
+random.seed(<span class="hljs-number">0</span>)
+
+log_dir = <span class="hljs-string">"~/logs"</span>
+writer = SummaryWriter(log_dir)
+device = <span class="hljs-string">"cuda:0"</span> <span class="hljs-keyword">if</span> torch.cuda.is_available() <span class="hljs-keyword">else</span> <span class="hljs-string">"cpu"</span></code></pre><h2 id="creating-the-dataset">Creating the dataset</h2><p>We will be using the COVID-19 CT scans provided by <a href="https://github.com/UCSD-AI4H/COVID-CT">UC San Diego on GitHub</a>. This dataset contains images taken from various radiology/medical journals, such as medRxiv, bioRxiv, NEJM, JAMA, Lancet. </p><p>We first start by cloning the GitHub repo to obtain the data. From the command line, run:</p><pre><code class="hljs php">git <span class="hljs-keyword">clone</span> https:<span class="hljs-comment">//github.com/UCSD-AI4H/COVID-CT</span></code></pre><p>Once the data is downloaded, cd into the <code>COVID-CT</code> folder and extract the zip files containing the images. </p><pre><code class="hljs properties"><span class="hljs-attr">cd</span> <span class="hljs-string">COVID-CT/Images-processed/</span>
+<span class="hljs-attr">unzip</span> <span class="hljs-string">CT_COVID.zip </span>
+<span class="hljs-attr">unzip</span> <span class="hljs-string">CT_NonCOVID.zip</span>
+<span class="hljs-comment">
+#cd back to the main folder</span>
+<span class="hljs-attr">cd</span> <span class="hljs-string">..</span></code></pre><h3 id="about-the-dataset">About the dataset</h3><p>Before
+ we start to build our classifier, let me make note of the structure of 
+the data. We have the positive class with the scans of COVID-19 positive
+ patients, whereas the negative class contains a mixture of healthy 
+patients, and patients suffering from other (non-COVID-19) diseases that
+ may cause opacities in the lungs.</p><p>In order to train a robust 
+classifier, we must have the information about the non-COVID-19 patients
+ as well. This is important since doctors never send a person straight 
+to get a CT scan. In fact, since pneumonia is a clinical diagnosis, 
+people who are put under CT Scan will probably be suffering from one of 
+the respiratory illnesses such as viral/bacterial pneumonia/strep, etc.,
+ already. We'd seldom see a healthy patient sent for a CT scan.</p><p>Therefore,
+ a practical classifier would have to differentiate between, say, 
+COVID-19 induced pneumonia and other types of pneumonia. However, the 
+negative class in this dataset is mixed up and contains healthy lungs, 
+as well as the lungs of patients suffering from other maladies such as 
+cancer. So what's the point of saying this? The point is that you should
+ take this classifier as one for educational purposes. However, any 
+classifier you want to put out in the wild would require more 
+differentiated data.</p><p>With that in mind, let's visualize the some examples from our dataset.</p><h3 id="sample-images-from-the-dataset">Sample images from the dataset </h3><p>We first begin with the COVID-19 positive cases.</p><pre><code class="hljs cs">covid_files_path = <span class="hljs-string">'Images-processed/CT_COVID/'</span>
+covid_files      = [os.path.<span class="hljs-keyword">join</span>(covid_files_path, x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> os.listdir(covid_files_path)]
+covid_images    =  [cv2.imread(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> random.sample(covid_files, <span class="hljs-number">5</span>)]
+
+plt.figure(figsize=(<span class="hljs-number">20</span>,<span class="hljs-number">10</span>))
+columns = <span class="hljs-number">5</span>
+<span class="hljs-keyword">for</span> i, <span class="hljs-function">image <span class="hljs-keyword">in</span> <span class="hljs-title">enumerate</span>(<span class="hljs-params">covid_images</span>):
+    plt.<span class="hljs-title">subplot</span>(<span class="hljs-params">len(covid_images</span>) / columns + 1, columns, i + 1)
+    plt.<span class="hljs-title">imshow</span>(<span class="hljs-params">image</span>)</span></code></pre><figure class="kg-card kg-image-card kg-card-hascaption"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-4.png" class="kg-image" alt=""><figcaption>Corona positive cases of CT scans from the dataset.&nbsp;</figcaption></figure><p>We can similarly see random samples of the non-corona cases by changing the value of <code>covid_files_path</code> variable to &nbsp;<code>Images-processed/CT_NonCOVID</code>.</p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-5.png" class="kg-image" alt=""><figcaption>Non-Corona positive cases of CT scans from the dataset.&nbsp;</figcaption></figure><h2 id="loading-data">Loading Data </h2><p>The
+ dataset is divided into three splits: the train set (425 examples), 
+validation set (118 examples), and the test set (203 examples). 
+Information for this split has been provided in the folder <code>Data-split</code> folder. &nbsp;This folder contains text files which explain what files belong to each split. </p><p>We write a function to read these files and put them into a list of strings. </p><pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read_txt</span><span class="hljs-params">(txt_path)</span>:</span>
+    <span class="hljs-keyword">with</span> open(txt_path) <span class="hljs-keyword">as</span> f:
+        lines = f.readlines()
+    txt_data = [line.strip() <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> lines]
+    <span class="hljs-keyword">return</span> txt_data</code></pre><p>We then create the <code>COVIDCTDataset</code> class which basically subclasses the <code>torch.utils.data.Dataset</code> class. </p><pre><code class="hljs ruby"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CovidCTDataset</span>(<span class="hljs-title">Dataset</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, root_dir, classes, covid_files, non_covid_files, transform=None)</span></span>:
+        <span class="hljs-keyword">self</span>.root_dir = root_dir
+        <span class="hljs-keyword">self</span>.classes = classes
+        <span class="hljs-keyword">self</span>.files_path = [non_covid_files, covid_files]
+        <span class="hljs-keyword">self</span>.image_list = []
+
+        <span class="hljs-comment"># read the files from data split text files</span>
+        covid_files = read_txt(covid_files)
+        non_covid_files = read_txt(non_covid_files)
+
+        <span class="hljs-comment"># combine the positive and negative files into a cummulative files list</span>
+        <span class="hljs-keyword">for</span> cls_index <span class="hljs-keyword">in</span> range(len(<span class="hljs-keyword">self</span>.classes)):
+            
+            class_files = [[os.path.join(<span class="hljs-keyword">self</span>.root_dir, <span class="hljs-keyword">self</span>.classes[cls_index], x), cls_index] \
+                            <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> read_txt(<span class="hljs-keyword">self</span>.files_path[cls_index])]
+            <span class="hljs-keyword">self</span>.image_list += class_files
+                
+        <span class="hljs-keyword">self</span>.transform = transform
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__len__</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span>:
+        <span class="hljs-keyword">return</span> len(<span class="hljs-keyword">self</span>.image_list)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__getitem__</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, idx)</span></span>:
+        path = <span class="hljs-keyword">self</span>.image_list[idx][<span class="hljs-number">0</span>]
+        
+        <span class="hljs-comment"># Read the image</span>
+        image = Image.open(path).convert(<span class="hljs-string">'RGB'</span>)
+        
+        <span class="hljs-comment"># Apply transforms</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">self</span>.<span class="hljs-symbol">transform:</span>
+            image = <span class="hljs-keyword">self</span>.transform(image)
+
+        label = int(<span class="hljs-keyword">self</span>.image_list[idx][<span class="hljs-number">1</span>])
+
+        data = {<span class="hljs-string">'img'</span>:   image,
+                <span class="hljs-string">'label'</span>: label,
+                <span class="hljs-string">'paths'</span> : path}
+
+        <span class="hljs-keyword">return</span> data</code></pre><p>The dataset returns a dictionary containing the image tensor, the label tensor, and a list of image paths included in the batch.</p><h3 id="input-pre-processing-and-data-augmentation">Input pre-processing and data augmentation</h3><p>For the training data:</p><ol><li>Resize the shorter side of the image to 256 while maintaining the aspect ratio</li><li>Do
+ a random crop of size ranging from 50% to 100% of the dimensions of the
+ image, and aspect ratio ranging randomly from 75% to 133% of the 
+original aspect ratio. Finally, the crop is resized to 224 × 224</li><li>Horizontally flip the image with a probability of 0.5</li><li>Normalize the image to have 0 mean and standard deviation of 1</li></ol><p>For testing: </p><ol><li>Resize the image to 224 × 224.</li><li>Normalize the image to have mean 0 and standard deviation of 1</li></ol><pre><code class="hljs makefile">normalize = transforms.Normalize(mean=[0,0,0], std=[1,1,1])
+train_transformer = transforms.Compose([
+    transforms.Resize(256),  
+    transforms.RandomResizedCrop((224),scale=(0.5,1.0)),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    normalize
+])
+
+val_transformer = transforms.Compose([
+    transforms.Resize((224,224)),
+    transforms.ToTensor(),
+    normalize
+])</code></pre><p>With our <code>Dataset</code> and <code>DataLoader</code> classes defined, let us now instantiate them. We use the label <code>0</code> for the non-COVID cases, whereas we use <code>1</code> for the COVID positive cases.</p><pre><code class="hljs php">batchsize = <span class="hljs-number">8</span>
+
+trainset = CovidCTDataset(root_dir=<span class="hljs-string">'Images-processed/'</span>,
+                          classes = [<span class="hljs-string">'CT_NonCOVID'</span>, <span class="hljs-string">'CT_COVID'</span>],
+                          covid_files=<span class="hljs-string">'Data-split/COVID/trainCT_COVID.txt'</span>,
+                          non_covid_files=<span class="hljs-string">'Data-split/NonCOVID/trainCT_NonCOVID.txt'</span>,
+                          transform= train_transformer)
+valset = CovidCTDataset(root_dir=<span class="hljs-string">'Images-processed/'</span>,
+                          classes = [<span class="hljs-string">'CT_NonCOVID'</span>, <span class="hljs-string">'CT_COVID'</span>],
+                          covid_files=<span class="hljs-string">'Data-split/COVID/valCT_COVID.txt'</span>,
+                          non_covid_files = <span class="hljs-string">'Data-split/NonCOVID/valCT_NonCOVID.txt'</span>,
+                          transform= val_transformer)
+testset = CovidCTDataset(root_dir=<span class="hljs-string">'Images-processed/'</span>,
+                          classes = [<span class="hljs-string">'CT_NonCOVID'</span>, <span class="hljs-string">'CT_COVID'</span>],
+                          covid_files=<span class="hljs-string">'Data-split/COVID/testCT_COVID.txt'</span>,
+                          non_covid_files=<span class="hljs-string">'Data-split/NonCOVID/testCT_NonCOVID.txt'</span>,
+                          transform= val_transformer)
+
+train_loader = DataLoader(trainset, batch_size=batchsize, drop_last=<span class="hljs-keyword">False</span>, shuffle=<span class="hljs-keyword">True</span>)
+val_loader = DataLoader(valset, batch_size=batchsize, drop_last=<span class="hljs-keyword">False</span>, shuffle=<span class="hljs-keyword">False</span>)
+test_loader = DataLoader(testset, batch_size=batchsize, drop_last=<span class="hljs-keyword">False</span>, shuffle=<span class="hljs-keyword">False</span>)</code></pre><p>We use a mini-batch size of 8.</p><h3 id="performance-metrics">Performance Metrics </h3><p>As we covered in <a href="https://blog.paperspace.com/fighting-corona-virus-with-ai-medical-imaging-testing/">Part 1</a>,
+ accuracy may not be enough to ascertain the efficacy of the classifier.
+ Therefore, we need to compute metrics such sensitivity, specificity, 
+area under ROC etc. We write the function <code>compute_metrics</code> to compute these metrics and some other quantities that will be useful for analysis later. </p><pre><code class="hljs python"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">compute_metrics</span><span class="hljs-params">(model, test_loader, plot_roc_curve = False)</span>:</span>
+    
+    model.eval()
+    
+    val_loss = <span class="hljs-number">0</span>
+    val_correct = <span class="hljs-number">0</span>
+    
+    criterion = nn.CrossEntropyLoss()
+    
+    score_list   = torch.Tensor([]).to(device)
+    pred_list    = torch.Tensor([]).to(device).long()
+    target_list  = torch.Tensor([]).to(device).long()
+    path_list    = []
+
+    
+    <span class="hljs-keyword">for</span> iter_num, data <span class="hljs-keyword">in</span> enumerate(test_loader):
+        
+        <span class="hljs-comment"># Convert image data into single channel data</span>
+        image, target = data[<span class="hljs-string">'img'</span>].to(device), data[<span class="hljs-string">'label'</span>].to(device)
+        paths = data[<span class="hljs-string">'paths'</span>]
+        path_list.extend(paths)
+        
+        <span class="hljs-comment"># Compute the loss</span>
+        <span class="hljs-keyword">with</span> torch.no_grad():
+            output = model(image)
+        
+        <span class="hljs-comment"># Log loss</span>
+        val_loss += criterion(output, target.long()).item()
+
+        
+        <span class="hljs-comment"># Calculate the number of correctly classified examples</span>
+        pred = output.argmax(dim=<span class="hljs-number">1</span>, keepdim=<span class="hljs-keyword">True</span>)
+        val_correct += pred.eq(target.long().view_as(pred)).sum().item()
+        
+        <span class="hljs-comment"># Bookkeeping </span>
+        score_list   = torch.cat([score_list, nn.Softmax(dim = <span class="hljs-number">1</span>)(output)[:,<span class="hljs-number">1</span>].squeeze()])
+        pred_list    = torch.cat([pred_list, pred.squeeze()])
+        target_list  = torch.cat([target_list, target.squeeze()])
+        
+    
+    classification_metrics = classification_report(target_list.tolist(), pred_list.tolist(),
+                                                  target_names = [<span class="hljs-string">'CT_NonCOVID'</span>, <span class="hljs-string">'CT_COVID'</span>],
+                                                  output_dict= <span class="hljs-keyword">True</span>)
+    
+    
+    <span class="hljs-comment"># sensitivity is the recall of the positive class</span>
+    sensitivity = classification_metrics[<span class="hljs-string">'CT_COVID'</span>][<span class="hljs-string">'recall'</span>]
+    
+    <span class="hljs-comment"># specificity is the recall of the negative class </span>
+    specificity = classification_metrics[<span class="hljs-string">'CT_NonCOVID'</span>][<span class="hljs-string">'recall'</span>]
+    
+    <span class="hljs-comment"># accuracy</span>
+    accuracy = classification_metrics[<span class="hljs-string">'accuracy'</span>]
+    
+    <span class="hljs-comment"># confusion matrix</span>
+    conf_matrix = confusion_matrix(target_list.tolist(), pred_list.tolist())
+    
+    <span class="hljs-comment"># roc score</span>
+    roc_score = roc_auc_score(target_list.tolist(), score_list.tolist())
+    
+    <span class="hljs-comment"># plot the roc curve</span>
+    <span class="hljs-keyword">if</span> plot_roc_curve:
+        fpr, tpr, _ = roc_curve(target_list.tolist(), score_list.tolist())
+        plt.plot(fpr, tpr, label = <span class="hljs-string">"Area under ROC = {:.4f}"</span>.format(roc_score))
+        plt.legend(loc = <span class="hljs-string">'best'</span>)
+        plt.xlabel(<span class="hljs-string">'False Positive Rate'</span>)
+        plt.ylabel(<span class="hljs-string">'True Positive Rate'</span>)
+        plt.show()
+        
+    
+    <span class="hljs-comment"># put together values</span>
+    metrics_dict = {<span class="hljs-string">"Accuracy"</span>: accuracy,
+                    <span class="hljs-string">"Sensitivity"</span>: sensitivity,
+                    <span class="hljs-string">"Specificity"</span>: specificity,
+                    <span class="hljs-string">"Roc_score"</span>  : roc_score, 
+                    <span class="hljs-string">"Confusion Matrix"</span>: conf_matrix,
+                    <span class="hljs-string">"Validation Loss"</span>: val_loss / len(test_loader),
+                    <span class="hljs-string">"score_list"</span>:  score_list.tolist(),
+                    <span class="hljs-string">"pred_list"</span>: pred_list.tolist(),
+                    <span class="hljs-string">"target_list"</span>: target_list.tolist(),
+                    <span class="hljs-string">"paths"</span>: path_list}
+    
+    
+    <span class="hljs-keyword">return</span> metrics_dict</code></pre><h2 id="define-the-model">Define the Model</h2><p>We
+ now define our model. We use the pretrained VGG-19 with batch 
+normalization as our model. We then replace its final linear layer with 
+one having 2 neurons at its output, and perform transfer learning over 
+our dataset. </p><p>We use cross entropy loss as our objective function.</p><pre><code class="hljs makefile">model = vgg19_bn(pretrained=True)
+model.classifier[6] = nn.Linear(4096, 2)
+model.to(device)</code></pre><p>Now, you can also try other models such 
+as ResNet, DenseNet etc., especially if you are looking for lighter 
+models, since VGG-19 has more parameters than either ResNet or DenseNet.
+ My choice for going for VGG is that it often leads to more intuitive 
+activation maps. </p><p>In case you want to use another model, make sure you replace the final layer to have two outputs. </p><h2 id="training-hyperparameters">Training Hyperparameters</h2><p>We
+ now set the training hyperparameters. We use an initial learning rate 
+of 0.01. We used Stochastic Gradient descent with momentum value of 0.9.</p><pre><code class="hljs ini"><span class="hljs-attr">learning_rate</span> = <span class="hljs-number">0.01</span>
+<span class="hljs-attr">optimizer</span>     = optim.SGD(model.parameters(), lr = learning_rate, momentum=<span class="hljs-number">0.9</span>)
+
+</code></pre><h3 id="early-stopping">Early Stopping</h3><p>We implement a class called <code>EarlyStopping</code>
+ which keeps the running averages of both loss and accuracy. &nbsp;This 
+will help us in implementing, well, you guessed it–early stopping.</p><p>This
+ class keeps a moving average of the loss and accuracy. If the metric 
+doesn't improve beyond a set number of epochs, defined by the <code>patience</code>, then the method <code>stop</code> returns:</p><p><strong>0</strong>, if patience has not been exhausted for either accuracy or the loss</p><p><strong>1</strong>, if patience is exhausted for both the accuracy and the loss</p><p><strong>2</strong>, if patience has been exhausted only for accuracy</p><p><strong>3</strong>, if patience has been exhausted only for loss</p><p>Note that the usage of the term <em>patience has been exhausted</em> for a metric means that the metric has not been improving for a set number of epochs.</p><pre><code class="hljs ruby">from collections import deque
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">EarlyStopping</span>(<span class="hljs-title">object</span>):</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, patience = <span class="hljs-number">8</span>)</span></span>:
+        <span class="hljs-keyword">super</span>(EarlyStopping, <span class="hljs-keyword">self</span>).__init_<span class="hljs-number">_</span>()
+        <span class="hljs-keyword">self</span>.patience = patience
+        <span class="hljs-keyword">self</span>.previous_loss = int(<span class="hljs-number">1</span>e8)
+        <span class="hljs-keyword">self</span>.previous_accuracy = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">self</span>.init = False
+        <span class="hljs-keyword">self</span>.accuracy_decrease_iters = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">self</span>.loss_increase_iters = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">self</span>.best_running_accuracy = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">self</span>.best_running_loss = int(<span class="hljs-number">1</span>e7)
+    
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add_data</span><span class="hljs-params">(<span class="hljs-keyword">self</span>, model, loss, accuracy)</span></span>:
+        
+        <span class="hljs-comment"># compute moving average</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">self</span>.<span class="hljs-symbol">init:</span>
+            running_loss = loss
+            running_accuracy = accuracy 
+            <span class="hljs-keyword">self</span>.init = True
+        
+        <span class="hljs-symbol">else:</span>
+            running_loss = <span class="hljs-number">0</span>.<span class="hljs-number">2</span> * loss + <span class="hljs-number">0</span>.<span class="hljs-number">8</span> * <span class="hljs-keyword">self</span>.previous_loss
+            running_accuracy = <span class="hljs-number">0</span>.<span class="hljs-number">2</span> * accuracy + <span class="hljs-number">0</span>.<span class="hljs-number">8</span> * <span class="hljs-keyword">self</span>.previous_accuracy
+        
+        <span class="hljs-comment"># check if running accuracy has improved beyond the best running accuracy recorded so far</span>
+        <span class="hljs-keyword">if</span> running_accuracy &lt; <span class="hljs-keyword">self</span>.<span class="hljs-symbol">best_running_accuracy:</span>
+            <span class="hljs-keyword">self</span>.accuracy_decrease_iters += <span class="hljs-number">1</span>
+        <span class="hljs-symbol">else:</span>
+            <span class="hljs-keyword">self</span>.best_running_accuracy = running_accuracy
+            <span class="hljs-keyword">self</span>.accuracy_decrease_iters = <span class="hljs-number">0</span>
+        
+        <span class="hljs-comment"># check if the running loss has decreased from the best running loss recorded so far</span>
+        <span class="hljs-keyword">if</span> running_loss &gt; <span class="hljs-keyword">self</span>.<span class="hljs-symbol">best_running_loss:</span>
+            <span class="hljs-keyword">self</span>.loss_increase_iters += <span class="hljs-number">1</span>
+        <span class="hljs-symbol">else:</span>
+            <span class="hljs-keyword">self</span>.best_running_loss = running_loss
+            <span class="hljs-keyword">self</span>.loss_increase_iters = <span class="hljs-number">0</span>
+        
+        <span class="hljs-comment"># log the current accuracy and loss</span>
+        <span class="hljs-keyword">self</span>.previous_accuracy = running_accuracy
+        <span class="hljs-keyword">self</span>.previous_loss = running_loss        
+        
+    
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">stop</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span>:
+        
+        <span class="hljs-comment"># compute thresholds</span>
+        accuracy_threshold = <span class="hljs-keyword">self</span>.accuracy_decrease_iters &gt; <span class="hljs-keyword">self</span>.patience
+        loss_threshold = <span class="hljs-keyword">self</span>.loss_increase_iters &gt; <span class="hljs-keyword">self</span>.patience
+        
+        
+        <span class="hljs-comment"># return codes corresponding to exhuaustion of patience for either accuracy or loss </span>
+        <span class="hljs-comment"># or both of them</span>
+        <span class="hljs-keyword">if</span> accuracy_threshold <span class="hljs-keyword">and</span> <span class="hljs-symbol">loss_threshold:</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>
+        
+        <span class="hljs-keyword">if</span> <span class="hljs-symbol">accuracy_threshold:</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>
+        
+        <span class="hljs-keyword">if</span> <span class="hljs-symbol">loss_threshold:</span>
+            <span class="hljs-keyword">return</span> <span class="hljs-number">3</span>
+        
+        
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>
+    
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">reset</span><span class="hljs-params">(<span class="hljs-keyword">self</span>)</span></span>:
+        <span class="hljs-comment"># reset</span>
+        <span class="hljs-keyword">self</span>.accuracy_decrease_iters = <span class="hljs-number">0</span>
+        <span class="hljs-keyword">self</span>.loss_increase_iters = <span class="hljs-number">0</span>
+    
+early_stopper = EarlyStopping(patience = <span class="hljs-number">5</span>)</code></pre><h2 id="training-loop">Training Loop</h2><p>If
+ the patience for running validation loss is exhausted, but not for 
+running accuracy, we multiply our learning rate by 0.1. If patience for 
+both running validation loss and running accuracy is exhausted, we stop 
+the training. </p><p>The reasons for such a policy lies in the nature of
+ the cross entropy loss, where a higher validation loss may not 
+necessarily correspond to a lower accuracy. Why? Because one of the 
+subtleties of Cross Entropy loss is that it prefers high confidence 
+predictions. So a more accurate model which is less confident about its 
+predictions may have a higher loss than the model with lower accuracy 
+but very confident predictions. Therefore, we make the decision only to 
+stop when the accuracy stops increasing as well. &nbsp;</p><p>We train for a maximum of 60 epochs.</p><h3 id="a-note-on-batch-size">A note on batch size</h3><p>As
+ you saw, I used a batch size of 8. However, to get good results you 
+must use a higher batch size, say 64 or 128. My RTX 2060 could only fit a
+ batch size of 8. To essentially achieve a batch update of size 64, we 
+can accumulate the gradient over 8 iterations ( 8 (batch size) * 8 
+(iterations) = 64) and perform a gradient update only then. The basic 
+template for doing this is very straight forward. </p><pre><code class="hljs makefile">loss += one_iter_loss / 8
+if i %% 8 == 0:
+	loss.backward()
+</code></pre><p>We divide the loss by 8 since we are adding updates for 8 iterations, and we need to rescale the loss. </p><p>Here
+ is the code for the training loop. It's a big chunk of code, so I have 
+put in comments so that you can easily follow along. </p><pre><code class="hljs perl">best_model = model
+best_val_score = <span class="hljs-number">0</span>
+
+criterion = nn.CrossEntropyLoss()
+
+<span class="hljs-keyword">for</span> epoch in range(<span class="hljs-number">60</span>):
+
+    model.train()    
+    train_loss = <span class="hljs-number">0</span>
+    train_correct = <span class="hljs-number">0</span>
+    
+    <span class="hljs-keyword">for</span> iter_num, data in enumerate(train_loader):
+        image, target = data[<span class="hljs-string">'img'</span>].to(device), data[<span class="hljs-string">'label'</span>].to(device)     
+
+        <span class="hljs-comment"># Compute the loss</span>
+        output = model(image)
+        loss = criterion(output, target.long()) / <span class="hljs-number">8</span>
+        
+        <span class="hljs-comment"># Log loss</span>
+        train_loss += loss.item()
+        loss.backward()
+
+        <span class="hljs-comment"># Perform gradient udpate</span>
+        <span class="hljs-keyword">if</span> iter_num % <span class="hljs-number">8</span> == <span class="hljs-number">0</span>:
+            optimizer.step()
+            optimizer.zero_grad()
+            
+
+        <span class="hljs-comment"># Calculate the number of correctly classified examples</span>
+        pred = output.argmax(dim=<span class="hljs-number">1</span>, keepdim=True)
+        train_correct += pred.e<span class="hljs-string">q(target.long()</span>.view_as(pred)).sum().item()
+        
+    
+    <span class="hljs-comment"># Compute and print the performance metrics</span>
+    metrics_dict = compute_metrics(model, val_loader)
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">'------------------ Epoch {} Iteration {}--------------------------------------'</span>.format(epoch,
+                                                                                                 iter_num))
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"Accuracy \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Accuracy'</span>]))
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"Sensitivity \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Sensitivity'</span>]))
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"Specificity \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Specificity'</span>]))
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"Area Under ROC \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Roc_score'</span>]))
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"Val Loss \t {}"</span>.format(metrics_dict[<span class="hljs-string">"Validation Loss"</span>]))
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">"------------------------------------------------------------------------------"</span>)
+    
+    <span class="hljs-comment"># Save the model with best validation accuracy</span>
+    <span class="hljs-keyword">if</span> metrics_dict[<span class="hljs-string">'Accuracy'</span>] &gt; best_val_score:
+        torch.save(model, <span class="hljs-string">"best_model.pkl"</span>)
+        best_val_score = metrics_dict[<span class="hljs-string">'Accuracy'</span>]
+    
+    
+    <span class="hljs-comment"># print the metrics for training data for the epoch</span>
+    <span class="hljs-keyword">print</span>(<span class="hljs-string">'\nTraining Performance Epoch {}: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'</span>.format(
+        epoch, train_loss/len(train_loader.dataset), train_correct, len(train_loader.dataset),
+        <span class="hljs-number">100.0</span> * train_correct / len(train_loader.dataset)))
+    
+    <span class="hljs-comment"># log the accuracy and losses in tensorboard</span>
+    writer.add_scalars( <span class="hljs-string">"Losses"</span>, {<span class="hljs-string">'Train loss'</span>: train_loss / len(train_loader), <span class="hljs-string">'Validation_loss'</span>: metrics_dict[<span class="hljs-string">"Validation Loss"</span>]},
+                                   epoch)
+    writer.add_scalars( <span class="hljs-string">"Accuracies"</span>, {<span class="hljs-string">"Train Accuracy"</span>: <span class="hljs-number">100.0</span> * train_correct / len(train_loader.dataset),
+                                       <span class="hljs-string">"Valid Accuracy"</span>: <span class="hljs-number">100.0</span> * metrics_dict[<span class="hljs-string">"Accuracy"</span>]}, epoch)
+
+    <span class="hljs-comment"># Add data to the EarlyStopper object</span>
+    early_stopper.add_data(model, metrics_dict[<span class="hljs-string">'Validation Loss'</span>], metrics_dict[<span class="hljs-string">'Accuracy'</span>])
+    
+    <span class="hljs-comment"># If both accuracy and loss are not improving, stop the training</span>
+    <span class="hljs-keyword">if</span> early_stopper.stop() == <span class="hljs-number">1</span>:
+        <span class="hljs-keyword">break</span>
+    
+    <span class="hljs-comment"># if only loss is not improving, lower the learning rate</span>
+    <span class="hljs-keyword">if</span> early_stopper.stop() == <span class="hljs-number">3</span>:
+        <span class="hljs-keyword">for</span> param_group in optimizer.param_groups:
+            learning_rate *= <span class="hljs-number">0</span>.<span class="hljs-number">1</span>
+            param_group[<span class="hljs-string">'lr'</span>] = learning_rate
+            <span class="hljs-keyword">print</span>(<span class="hljs-string">'Updating the learning rate to {}'</span>.format(learning_rate))
+            early_stopper.reset()
+    
+    </code></pre><p>As this network trains, you can see the the 
+training/validation accuracy and losses being plotted in TensorBoard by 
+going to the directory <code>logs</code> and running TensorBoard from it. </p><pre><code class="hljs properties"><span class="hljs-attr">cd</span> <span class="hljs-string">logs</span>
+<span class="hljs-attr">tensorboard</span> <span class="hljs-string">--logdir .</span></code></pre><h2 id="testing-performace">Testing Performace</h2><p>For testing, you could use either of these options:</p><ol><li>Latest model</li><li>Load the model with the best validation accuracy which is stored as <code>best_model.pkl</code>. To load it, use <code>model = torch.load('best_model.pkl</code>)</li><li>Pre-trained model provided here. Download the model and use <code>model = torch.load('pretrained_covid_model.pkl')</code>. Download the pretrained model from <a href="https://drive.google.com/file/d/11UUIpfpSnJdZ2axT4hlQAJliLf4U-FNk/view?usp=sharing">here</a>. </li></ol><p>Once you have loaded the model, you can compute the performance metrics using the following code. </p><pre><code class="hljs php">model = torch.load(<span class="hljs-string">"pretrained_covid_model.pkl"</span> )
+
+metrics_dict = compute_metrics(model, test_loader, plot_roc_curve = <span class="hljs-keyword">True</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">'------------------- Test Performance --------------------------------------'</span>)
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Accuracy \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Accuracy'</span>]))
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Sensitivity \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Sensitivity'</span>]))
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Specificity \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Specificity'</span>]))
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"Area Under ROC \t {:.3f}"</span>.format(metrics_dict[<span class="hljs-string">'Roc_score'</span>]))
+<span class="hljs-keyword">print</span>(<span class="hljs-string">"------------------------------------------------------------------------------"</span>)</code></pre><p>Running this piece of code produces: </p><figure class="kg-card kg-image-card kg-card-hascaption"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-6.png" class="kg-image" alt=""><figcaption>ROC Curve and Test performance of the model</figcaption></figure><p>You can also print the confusion matrix of the model. </p><pre><code class="hljs php">conf_matrix = metrics_dict[<span class="hljs-string">"Confusion Matrix"</span>]
+ax= plt.subplot()
+sns.heatmap(conf_matrix, annot=<span class="hljs-keyword">True</span>, ax = ax, cmap = <span class="hljs-string">'Blues'</span>); <span class="hljs-comment">#annot=True to annotate cells</span>
+
+<span class="hljs-comment"># labels, title and ticks</span>
+ax.set_xlabel(<span class="hljs-string">'Predicted labels'</span>);ax.set_ylabel(<span class="hljs-string">'True labels'</span>); 
+ax.set_title(<span class="hljs-string">'Confusion Matrix'</span>); 
+ax.xaxis.set_ticklabels([<span class="hljs-string">'CoViD'</span>, <span class="hljs-string">'NonCoViD'</span>]); ax.yaxis.set_ticklabels([<span class="hljs-string">'CoViD'</span>, <span class="hljs-string">'NonCoViD'</span>]);</code></pre><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-7.png" class="kg-image" alt=""></figure><h3 id="identifying-mistakes">Identifying Mistakes</h3><p>We
+ now look at the the mistakes that our model has committed. We first get
+ the indices of the misclassified examples. Then we look at the scores 
+assigned to the misclassified examples and plot a histogram.</p><pre><code class="hljs makefile">targets = np.array(metrics_dict['target_list'])
+preds   = np.array(metrics_dict['pred_list'])
+scores  = np.array(metrics_dict['score_list'])
+
+
+misclassified_indexes = np.nonzero(targets != preds)
+misclassified_scores = scores[misclassified_indexes[0]]
+
+<span class="hljs-comment"># plot the historgram of misclassified scores</span>
+plt.hist(misclassified_scores)
+plt.xlabel(<span class="hljs-string">"scores"</span>)
+plt.ylabel(<span class="hljs-string">"No. of examples"</span>)
+plt.show()</code></pre><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-8.png" class="kg-image" alt=""></figure><p>We
+ plot the scores to see the nature of mistakes our model commits. 
+Mistakes for examples with scores near 0.5 (our threshold) means that 
+our model is ambiguous about these examples. We also see spikes at both 
+ends, 0.0 and 1.0. This means that the model is very confident in 
+misclassifying these examples. </p><h2 id="using-grad-cam-to-visualise-activations">Using Grad-CAM to visualise activations</h2><p>Gradient-weighted Class Activation Mapping, or more simply Grad-CAM, helps us get <em>what the network is seeing</em>, and helps us see which neurons are firing in a particular layer given the image as input.</p><p>We first begin by cloning the requisite repo implementing Grad-CAM. </p><pre><code class="hljs diff"><span class="hljs-addition">!git clone https://github.com/jacobgil/pytorch-grad-cam</span>
+<span class="hljs-addition">!mv pytorch-grad-cam gradcam</span></code></pre><p>Now we define a function called <code>do_grad_cam</code> which takes the path of an image and outputs an image with the Grad-CAM mask.</p><pre><code class="hljs properties"><span class="hljs-attr">from</span> <span class="hljs-string">gradcam.gradcam import *</span>
+
+<span class="hljs-attr">def</span> <span class="hljs-string">do_grad_cam(path):</span>
+<span class="hljs-comment">
+    # Initialise the grad cam object. </span>
+<span class="hljs-comment">    # we use model.features as the feature extractor and use the layer no. 35 for gradients. </span>
+    <span class="hljs-attr">grad_cam</span> = <span class="hljs-string">GradCam(model=model, feature_module=model.features, \
+                           target_layer_names=["35"], use_cuda=True)</span>
+<span class="hljs-comment">
+    # read in the image, and prepare it for the network</span>
+    <span class="hljs-attr">orig_im</span> = <span class="hljs-string">cv2.imread(path)</span>
+    <span class="hljs-attr">img</span> = <span class="hljs-string">Image.fromarray(orig_im)</span>
+    <span class="hljs-attr">inp</span> = <span class="hljs-string">val_transformer(img).unsqueeze(0)</span>
+<span class="hljs-comment">
+    # main inference</span>
+    <span class="hljs-attr">mask</span> = <span class="hljs-string">grad_cam(inp, None)</span>
+<span class="hljs-comment">
+    # create the heatmap </span>
+    <span class="hljs-attr">heatmap</span> = <span class="hljs-string">cv2.applyColorMap(np.uint8(255 * mask), cv2.COLORMAP_JET)</span>
+    <span class="hljs-attr">heatmap</span> = <span class="hljs-string">np.float32(heatmap) / 255</span>
+<span class="hljs-comment">    
+    #add the heatmap to the original image</span>
+    <span class="hljs-attr">cam</span> = <span class="hljs-string">heatmap + np.float32(cv2.resize(orig_im, (224,224))/255.)</span>
+    <span class="hljs-attr">cam</span> = <span class="hljs-string">cam / np.max(cam)</span>
+<span class="hljs-comment">    
+    # BGR -&gt; RGB since OpenCV operates with BGR values. </span>
+    <span class="hljs-attr">cam</span> = <span class="hljs-string">cam[:,:,::-1] </span>
+    
+    <span class="hljs-attr">return</span> <span class="hljs-string">cam</span>
+</code></pre><p>Let us now use the grad cam functionality to visualize a
+ few examples from True positives, True negatives, False positives and 
+False negatives.</p><h3 id="true-positives">True Positives</h3><pre><code class="hljs makefile">true_positives = np.logical_and(preds == 1, targets == 1)
+true_positives = np.logical_and(true_positives, scores &gt; 0.9)
+true_positives_indices = np.nonzero(true_positives)
+true_positives_paths = [metrics_dict['paths'][i] for i in true_positives_indices[0]]
+
+
+true_positive_images    =  [do_grad_cam(x) for x in random.sample(true_positives_paths, 10)]
+
+plt.figure(figsize=(30,15))
+columns = 5
+for i, image in enumerate(true_positive_images):
+    plt.subplot(len(true_positive_images) / columns + 1, columns, i + 1)
+    plt.imshow(image)</code></pre><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-10.png" class="kg-image" alt=""></figure><p>We
+ see the model is able to focus on the ground-glass deformities that are
+ characteristic of CT scans of COVID-infected patients. However, we also
+ see that at times the network focuses on the boundary of the lung (in 
+gray color) to make the decision. I am no radiologist to say whether we 
+should be looking at the boundary to make the decision, but if not, then
+ this is something that merits further inspection. </p><h3 id="false-positives">False Positives</h3><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-11.png" class="kg-image" alt=""></figure><p>In
+ these examples, we see that the network focuses again on opacities but 
+it isn't quite efficient enough to identify opacities corresponding to 
+non-COVID pneumonia from COVID pneumonia. </p><h3 id="true-negatives">True Negatives</h3><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-9.png" class="kg-image" alt=""></figure><p>In
+ true negatives, the network seems to be focusing more on the lung 
+boundary rather than the opacities in the lung. The opacities it sees 
+are not very <em>dense, </em>or ground-glass like. Again, since I'm no 
+radiologist I may be totally off track, but it seems as if the model 
+depends on scarcity of opacities to make the negative prediction.</p><h3 id="false-negatives">False Negatives</h3><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-12.png" class="kg-image" alt=""></figure><p>At
+ last, in false negatives, the network is able to pick up on opacities 
+but classifies them as negative. It seems as if the network has some 
+threshold for opacities. In this case, it seems as if the network is 
+thinking of them of as non-COVID pneumonia. In particular, for the 
+images in row 2, col 2 and row 1, col 3, the network has hardly anything
+ to work with. </p><p>Another artifact we see is the network focusing on edges of the image, which might be due to overfitting. </p><h3 id="scope-for-improvement">Scope for Improvement </h3><p>While the model does give decent metrics, we can further improve on it. Here are some avenues we can look into. </p><ol><li><strong>Get More Data: &nbsp;</strong>At
+ only 746 examples, the dataset is too small for a model trained on it 
+to be deployed in the real world. The model overfits to the dataset, as 
+evident by the TensorBoard log of the accuracies and the losses.</li></ol><figure class="kg-card kg-image-card"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/image-13.png" class="kg-image" alt=""></figure><p>The
+ train accuracy reaches almost 100, whereas the train loss is of the 
+order 0.01. However, the validation accuracy hovers around 80, with 
+validation loss being around 0.6. Adding more data will help. Either one
+ can obtain data, or maybe use GANs to create more medical data, an 
+approach that has been outlined in the following paper. </p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://arxiv.org/abs/1904.00838"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Learning More with Less: GAN-based Medical Image Augmentation</div><div class="kg-bookmark-description">Convolutional Neural Network (CNN)-based accurate prediction typically
+requires large-scale annotated training data. In Medical Imaging, however, both
+obtaining medical data and annotating them by expert physicians are
+challenging; to overcome this lack of data, Data Augmentation (DA) using
+Generati…</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/favicon.ico"><span class="kg-bookmark-author">Changhee Han</span><span class="kg-bookmark-publisher">arXiv.org</span></div></div><div class="kg-bookmark-thumbnail"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/bibsonomy.png"></div></a></figure><p>2. <strong>Get Differentiated Data: </strong>As
+ I have observed earlier, the data for the negative class is a mix of 
+healthy patients and non-COVID disease sufferers. The performance could 
+be much better if we had labels separating the healthy patients from the
+ non-healthy non-COVID ones. This is perhaps the reason why our model 
+mistakes non-COVID opacities for COVID ones. </p><p>3. <strong>Use Better Representation: </strong>While
+ transfer learning is a very successful technique, performing medical 
+image application on models pretrained on ImageNet, a dataset of 
+everyday items, may not be optimal. Therefore, you might want to learn a
+ representation over some medical task itself. This approach is taken by
+ the authors of the following paper, which achieves a higher accuracy of
+ 86% by using a self contrastive representation learning technique 
+called <a href="https://arxiv.org/abs/1911.05722">MoCo</a> to learn a representation over the LUNA16 dataset.</p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://www.medrxiv.org/content/10.1101/2020.04.13.20063941v1"><div class="kg-bookmark-content"><div class="kg-bookmark-title">Sample-Efficient Deep Learning for COVID-19 Diagnosis Based on CT Scans</div><div class="kg-bookmark-description">Coronavirus
+ disease 2019 (COVID-19) has infected more than 1.3 million individuals 
+all over the world and caused more than 106,000 deaths. One major hurdle
+ in controlling the spreading of this disease is the inefficiency and 
+shortage of medical tests. There have been increasing efforts on 
+developing…</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/favicon_002.ico"><span class="kg-bookmark-author">Find this author on Google Scholar</span><span class="kg-bookmark-publisher">medRxiv</span></div></div><div class="kg-bookmark-thumbnail"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/medrxiv_internal_logo.png"></div></a></figure><p>4. <strong>Use Better Networks: </strong>While
+ we used a vanilla VGG-19, one can use advance architectures to learn 
+the classifier. For example, one paper uses a modification of the Fire 
+module in SqueezeNet and Bayesian optimization to achieve an accuracy of
+ 83%. </p><figure class="kg-card kg-bookmark-card"><a class="kg-bookmark-container" href="https://arxiv.org/abs/2004.12837"><div class="kg-bookmark-content"><div class="kg-bookmark-title">A Light CNN for detecting COVID-19 from CT scans of the chest</div><div class="kg-bookmark-description">OVID-19 is a world-wide disease that has been declared as a pandemic by the
+World Health Organization. Computer Tomography (CT) imaging of the chest seems
+to be a valid diagnosis tool to detect COVID-19 promptly and to control the
+spread of the disease. Deep Learning has been extensively used in med…</div><div class="kg-bookmark-metadata"><img class="kg-bookmark-icon" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/favicon.ico"><span class="kg-bookmark-author">Matteo Polsinelli</span><span class="kg-bookmark-publisher">arXiv.org</span></div></div><div class="kg-bookmark-thumbnail"><img src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/bibsonomy.png"></div></a></figure><p>While all of these are exciting things to explore, we'll leave these for another post. </p><!--kg-card-begin: html--><div class="speed-and-simplicity-card"><div class="speed-simplicity-card-header-wrapper"><p class="speed-simplicity-card-header-t">Add speed and simplicity to your Machine Learning workflow today</p></div><a href="https://www.paperspace.com/account/signup" class="button white-bg red w-button">Get started</a><a href="https://info.paperspace.com/contact-sales" class="button cc-cta ctasales footer-card w-button">Contact Sales</a><div class="speed-simplicity-img"></div></div><!--kg-card-end: html--><h2 id="conclusion">Conclusion</h2><p>In
+ this post we went over creating a simple CNN-based classifier to 
+classify lung CTs as COVID and non-COVID related. We attained an 
+accuracy of 82.8 percent. More than that, this post should provide you 
+with the basic code setup to start experimenting with the COVID-CT 
+dataset so that you can start tinkering with the code to achieve better 
+performance. </p><p>A Jupyter Notebook containing all the code can be run for free and downloaded from the <a href="https://console.paperspace.com/gcn-team/notebook/pr86bmca9">ML Showcase</a>.</p><p>For more posts related to coronavirus, check out:</p><ul><li>My first article on <a href="https://blog.paperspace.com/fighting-corona-virus-with-ai-medical-imaging-testing/">using deep learning to improve COVID-19 testing</a></li><li><a href="https://blog.paperspace.com/fighting-covid-19-using-artificial-intelligence-and-data/">A Review of Active COVID-19 Research Groups and Datasets</a></li><li><a href="https://blog.paperspace.com/coronavirus-background-and-data/">COVID-19: The Data We Have, and How We Can Use It</a></li></ul><!--kg-card-begin: html--><div id="discourse-comments" style="width:100%;padding:46px 0px 49px 0px;"><iframe src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/comments.htm" id="discourse-embed-frame" scrolling="no" referrerpolicy="no-referrer-when-downgrade" width="100%" height="42px" frameborder="0"></iframe></div>
+
+<script type="text/javascript">
+       DiscourseEmbed = { discourseUrl: 'https://community.paperspace.com/',
+                     discourseEmbedUrl: 'https://blog.paperspace.com/fighting-coronavirus-with-ai-building-covid-19-classifier'};
+
+       (function() {
+         var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
+         d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+       })();
+</script><!--kg-card-end: html-->
+                </div>
+            </section>
+
+
+
+        </article>
+
+    </div>
+</main>
+
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+                <article class="read-next-card">
+                    <header class="read-next-card-header">
+                        <h3><span>More in</span> <a href="https://blog.paperspace.com/tag/coronavirus/">Coronavirus</a></h3>
+                    </header>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li>
+                                <h4><a href="https://blog.paperspace.com/interview-with-josh-nicholson-scite-ai/">Turning Noise Into Signal: Using AI to Gain Context for Scientific Research</a></h4>
+                                <div class="read-next-card-meta">
+                                    <p><time datetime="2020-05-11">11 May 2020</time> –
+                                        4 min read</p>
+                                </div>
+                            </li>
+                            <li>
+                                <h4><a href="https://blog.paperspace.com/coronavirus-background-and-data/">COVID-19: The Data We Have, and How We Can Use It</a></h4>
+                                <div class="read-next-card-meta">
+                                    <p><time datetime="2020-04-18">18 Apr 2020</time> –
+                                        19 min read</p>
+                                </div>
+                            </li>
+                            <li>
+                                <h4><a href="https://blog.paperspace.com/fighting-covid-19-using-artificial-intelligence-and-data/">Fighting COVID-19 with Data and AI: A Review of Active Research Groups and Datasets</a></h4>
+                                <div class="read-next-card-meta">
+                                    <p><time datetime="2020-04-09">9 Apr 2020</time> –
+                                        14 min read</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="https://blog.paperspace.com/tag/coronavirus/">See all 4 posts
+                            →</a>
+                    </footer>
+                </article>
+
+                <article class="post-card post tag-data-science ">
+
+    <a class="post-card-image-link" href="https://blog.paperspace.com/strengthen-your-python-machine-learning/">
+        <img class="post-card-image" srcset="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/sharon-mccutcheon-eMP4sYPJ9x0-unsplash_002.jpg 300w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/sharon-mccutcheon-eMP4sYPJ9x0-unsplash_003.jpg 600w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/sharon-mccutcheon-eMP4sYPJ9x0-unsplash.jpg 1000w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/sharon-mccutcheon-eMP4sYPJ9x0-unsplash_004.jpg 2000w" sizes="(max-width: 1000px) 400px, 700px" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/sharon-mccutcheon-eMP4sYPJ9x0-unsplash_003.jpg" alt="2 Books to Strengthen Your Command of Python Machine Learning">
+    </a>
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="https://blog.paperspace.com/strengthen-your-python-machine-learning/">
+
+            <header class="post-card-header">
+                    <div class="post-card-primary-tag">Data Science</div>
+                <h2 class="post-card-title">2 Books to Strengthen Your Command of Python Machine Learning</h2>
+            </header>
+
+            <section class="post-card-excerpt">
+                    <p>This post is part of “AI education”, a series of 
+posts that review and explore educational content on data science and 
+machine learning. Mastering machine learning is not easy, even</p>
+            </section>
+
+        </a>
+
+        <footer class="post-card-meta">
+            <ul class="author-list">
+                <li class="author-list-item">
+            
+                    <div class="author-name-tooltip">
+                        Ben Dickson
+                    </div>
+            
+                    <a href="https://blog.paperspace.com/author/ben/" class="static-avatar">
+                        <img class="author-profile-image" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/5184782561a26df20cb56c8eb87eef27.jpg" alt="Ben Dickson">
+                    </a>
+                </li>
+            </ul>
+            <div class="post-card-byline-content">
+                <span><a href="https://blog.paperspace.com/author/ben/">Ben Dickson</a></span>
+                <span class="post-card-byline-date"><time datetime="2020-07-10">10 Jul 2020</time> <span class="bull">•</span> 6 min read</span>
+            </div>
+        </footer>
+
+    </div>
+
+</article>
+
+                <article class="post-card post tag-yolo tag-machine-learning tag-computer-vision ">
+
+    <a class="post-card-image-link" href="https://blog.paperspace.com/improving-yolo/">
+        <img class="post-card-image" srcset="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/david-clode-xNVPuHanjkM-unsplash_002.jpg 300w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/david-clode-xNVPuHanjkM-unsplash_003.jpg 600w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/david-clode-xNVPuHanjkM-unsplash.jpg 1000w, How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/david-clode-xNVPuHanjkM-unsplash_004.jpg 2000w" sizes="(max-width: 1000px) 400px, 700px" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/david-clode-xNVPuHanjkM-unsplash_003.jpg" alt="How to Improve YOLOv3">
+    </a>
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="https://blog.paperspace.com/improving-yolo/">
+
+            <header class="post-card-header">
+                    <div class="post-card-primary-tag">YOLO</div>
+                <h2 class="post-card-title">How to Improve YOLOv3</h2>
+            </header>
+
+            <section class="post-card-excerpt">
+                    <p>YOLO has been a very popular and fast object 
+detection algorithm, but unfortunately not the best-performing. In this 
+article I will highlight simple training heuristics and small 
+architectural changes that can make YOLOv3 perform better than models 
+like Faster R-CNN and Mask R-CNN.</p>
+            </section>
+
+        </a>
+
+        <footer class="post-card-meta">
+            <ul class="author-list">
+                <li class="author-list-item">
+            
+                    <div class="author-name-tooltip">
+                        Rohit Kumar Singh
+                    </div>
+            
+                    <a href="https://blog.paperspace.com/author/rohit/" class="static-avatar">
+                        <img class="author-profile-image" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/BA1_0484-1-.jpg" alt="Rohit Kumar Singh">
+                    </a>
+                </li>
+            </ul>
+            <div class="post-card-byline-content">
+                <span><a href="https://blog.paperspace.com/author/rohit/">Rohit Kumar Singh</a></span>
+                <span class="post-card-byline-date"><time datetime="2020-06-29">29 Jun 2020</time> <span class="bull">•</span> 13 min read</span>
+            </div>
+        </footer>
+
+    </div>
+
+</article>
+        </div>
+    </div>
+</aside>
+
+
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://blog.paperspace.com/">Paperspace Blog</a> © 2020</section>
+                <nav class="site-footer-nav">
+                    <a href="https://blog.paperspace.com/">Latest Posts</a>
+                    <a href="https://www.facebook.com/HelloPaperspace/" target="_blank" rel="noopener">Facebook</a>
+                    <a href="https://twitter.com/hellopaperspace" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org/" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/jquery-3.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous">
+    </script>
+    <script src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/casper.js"></script>
+
+    <script>
+        // Parse the URL parameter
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Give the parameter a variable name
+        var action = getParameterByName('action');
+
+        $(document).ready(function () {
+            if (action == 'subscribe') {
+                $('body').addClass("subscribe-success");
+            }
+
+            $('.subscribe-success-message .subscribe-close').click(function () {
+                $('.subscribe-success-message').addClass('close');
+            });
+
+            // Reset form on opening subscrion overlay
+            $('.subscribe-button').click(function() {
+                $('.subscribe-overlay form').removeClass();
+                $('.subscribe-email').val('');
+            });
+        });
+    </script>
+
+    <script>
+    $(document).ready(function () {
+        // FitVids - start
+        var $postContent = $(".post-full-content");
+        $postContent.fitVids();
+        // FitVids - end
+
+        // Replace nav with title on scroll - start
+        Casper.stickyNavTitle({
+            navSelector: '.site-nav-main',
+            titleSelector: '.post-full-title',
+            activeClass: 'nav-post-title-active'
+        });
+        // Replace nav with title on scroll - end
+
+        // Hover on avatar
+        var hoverTimeout;
+        $('.author-list-item').hover(function () {
+            var $this = $(this);
+
+            clearTimeout(hoverTimeout);
+
+            $('.author-card').removeClass('hovered');
+            $(this).children('.author-card').addClass('hovered');
+
+        }, function () {
+            var $this = $(this);
+
+            hoverTimeout = setTimeout(function () {
+                $this.children('.author-card').removeClass('hovered');
+            }, 800);
+        });
+    });
+</script>
+
+
+    <script type="text/javascript" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/jquery.js"></script>
+    <script type="text/javascript" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/gh-instantiate.js"></script>
+
+    <!-- Syntax highlighting w/ Highlight.js-->
+<script>
+// https://highlightjs.org/
+activateHighlight = function() {
+    document.querySelectorAll("pre code").forEach(
+        function(currentValue, currentIndex, listObj) {
+    		hljs.highlightBlock(currentValue);
+        }
+    );
+}
+
+if (window.attachEvent) {
+    window.attachEvent('onload', loadHighlight);
+} else {
+    if (window.onload) {
+		var originalOnload = window.onload;
+    	var newOnload = function(evt) {
+        	originalOnload(evt);
+        	activateHighlight(evt);
+    	};
+    	window.onload = newOnload;
+    } else {
+        window.onload = activateHighlight;
+    }
+}
+</script>
+
+
+<!-- Signup button footer and signup button styles-->
+<script>
+    $(document).scroll(function () {
+    var y = $(this).scrollTop();
+    if (y > 300) {
+        $('.signupBtnScroll').fadeIn();
+    } else {
+        $('.signupBtnScroll').fadeOut();
+    }
+
+    });
+</script>
+<style>
+    .signupBtnScroll {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        background: #000;
+        z-index: 1000;
+}
+    .signupBtnScroll p {
+        color: #d6d6d6; 
+        font-size: 18px; 
+        margin-bottom: 13px; 
+        margin-right: 13px;
+        margin-top: 8px;
+        z-index: 2000;
+    }
+    .button-signup {
+        background: #0071ff;
+        font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Open Sans,Helvetica Neue,sans-serif; 
+        font-size: .9em; 
+        color: #fff;  
+        white-space: nowrap; 
+        height: 44px; 
+        padding: 0 23px; 
+        -webkit-box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+        box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); 
+        border-radius: 4px; font-weight: 600;  
+        letter-spacing: .025em; 
+        text-decoration: none; 
+        text-transform: uppercase;
+        width: auto;
+    }
+    #centeredButton {  
+        margin:0 auto; 
+        margin-top: 8px;
+        padding-right: 7px;
+        display: flex;
+		-ms-flex-wrap: wrap;
+		flex-wrap: wrap;
+		-ms-flex-pack: justify;
+		justify-content: center;
+		-ms-flex-align: center;
+        align-items: center;
+    }
+    .button-signup:hover {
+        background: #004fb3;
+    }
+    .button-login {
+	background: white;
+	}
+    .button-login:hover {
+	background: #f1f1f1;
+	}
+    .DesktopOnly {
+        display: none;
+    }
+    @media screen and (min-width: 800px) {
+        .DesktopOnly {
+            display: block;
+    }
+    .site-footer-content .inner {
+        z-index: 2000;
+    }        
+    .site-footer-content .inner { /* footer cleanup */ 
+    	width: 100px;
+    	margin: 0 auto;        
+    } 
+    .site-footer-content {
+    	justify-content: center;
+    	max-width: 298px;
+    }
+    section.copyright {
+        opacity: .75;
+    }
+    p.tryPaperspace {
+     	margin-bottom: 6px; 
+        margin-top: 4px;
+        font-size: 20px;
+        }
+</style>
+
+
+<div class="signupBtnScroll" style="display: block;">
+    <div id="centeredButton">
+        <p class="tryPaperspace">Try Paperspace for <span style="font-weight:700;border-bottom: 2px solid #29a0e0;">free</span></p>
+        <a href="https://www.paperspace.com/account/signup">
+         <button class="button-signup">Sign Up</button>
+        </a>
+    </div>
+</div>
+
+
+
+<script type="text/javascript" id="hs-script-loader" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/6894371_002.js"></script>
+<script type="text/javascript" id="">try{var cookieName="ps_refer",cookieValue=document.referrer,expirationTime=2592E3;expirationTime*=1E3;var date=new Date,dateTimeNow=date.getTime();date.setTime(dateTimeNow+expirationTime);date=date.toUTCString();document.cookie=cookieName+"\x3d"+cookieValue+"; SameSite\x3dNone; Secure; expires\x3d"+date+"; path\x3d/; domain\x3d."+location.hostname.replace(/^www\./i,"")}catch(a){};</script>
+
+
+
+<div id="drift-widget-container" style="position: absolute; z-index: 2147483647;"><iframe id="drift-widget" src="How%20to%20Build%20a%20COVID-19%20Classifier%20Using%20PyTorch%20Paperspace%20Blog_fi%C8%99iere/index.htm" style="border: medium none; display: block; height: 92px !important; width: 456px !important; position: fixed; inset: auto 24px 24px auto; visibility: visible; z-index: 2147483647; max-height: 100vh; max-width: 100%; transition: none 0s ease 0s; background: transparent none repeat scroll 0% 0%; opacity: 1; pointer-events: auto; touch-action: auto;" title="Drift Messenger" role="complementary" class="drift-widget-slider"></iframe></div></body></html>

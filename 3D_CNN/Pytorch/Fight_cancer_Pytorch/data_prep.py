@@ -18,9 +18,9 @@ import torch.cuda
 from torch.utils.data import Dataset
 import copy
 
-annotations_path = r'C:\Users\40737\Downloads\LunaDataset\annotations.csv'
-candidates_path = r'C:\Users\40737\Downloads\LunaDataset\candidates.csv'
-luna_subsets = r'C:\Users\40737\Downloads\LunaDataset'
+annotations_path = r'E:\Alex Work\Datasets\Luna Dataset\annotations.csv'
+candidates_path = r'E:\Alex Work\Datasets\Luna Dataset\candidates.csv'
+luna_subsets = r'E:\Alex Work\Datasets\Luna Dataset'
 
 CandidateInfoTuple = namedtuple('CandidateInfoTuple', 'isNodule_bool , diameter_mm, series_uid, center_xyz' )
 
@@ -142,10 +142,3 @@ class LunaDataset(Dataset):
         
         return (candidate_t, pos_t, candidate_info_tup.series_uid, torch.tensor(center_irc))
     
-
-#candidate_list = getCandidateInfoList()
-#positive_info_list = [x for x in candidate_list if x[0]]
-
-
-
-lista = getCandidateInfoList()
