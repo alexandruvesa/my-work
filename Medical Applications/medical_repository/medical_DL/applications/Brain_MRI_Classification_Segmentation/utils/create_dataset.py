@@ -1,21 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec 24 17:27:10 2020
-
-@author: 40737
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec 24 16:11:47 2020
-
-@author: 40737
-"""
-
 import os
 import numpy as np
 import pandas as pd
 import glob
+from sklearn.model_selection import train_test_split
 
 
 #data = pd.read_csv('C:/Alex Work/Research/Datasets/kaggle_3/data.csv')
@@ -23,7 +10,7 @@ import glob
 
 def create_dataset():
     data_map = []
-    for sub_dir_path in glob.glob("C:/Alex Work/Research/Datasets/kaggle_3m/"+"*"):
+    for sub_dir_path in glob.glob("E:/Alex Work/Datasets/Kaggle Brain MRI/kaggle_3m/"+"*"):
         try:
             dir_name = sub_dir_path.split('/')[-1]
             for filename_name in os.listdir(sub_dir_path):
@@ -53,3 +40,8 @@ def create_dataset():
                              "mask_path":masks})
 
     return brain_df
+
+
+def create_test_set(df):
+    _, test = train_test_split(df, test_size=0.15)
+    return test

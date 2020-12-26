@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat Dec 26 15:37:38 2020
+
+@author: Alex
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Dec 24 16:11:47 2020
 
 @author: 40737
@@ -33,6 +40,7 @@ from keras_preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from sklearn.metrics import confusion_matrix, classification_report,accuracy_score
+from tensorflow.keras.utils  import get_custom_objects
 
 def create_callbacks():
     earlystopping = EarlyStopping(monitor='val_loss', 
@@ -40,7 +48,7 @@ def create_callbacks():
                               verbose=1, 
                               patience=15
                              )
-    checkpointer = ModelCheckpoint(filepath="clf-resnet-weights.hdf5", 
+    checkpointer = ModelCheckpoint(filepath="ResUNet-segModel-weights.hdf5", 
                                    verbose=1, 
                                    save_best_only=True
                                   )
@@ -163,7 +171,7 @@ class ResUnet:
         self.input_shape = input_shape
         self.model = self.build()
     
-    def resblock(self, X,filters):
+    def resblock(self,X,filters):
         X_copy = X
         
         X = Conv2D(filters, kernel_size = (1,1), kernel_initializer = 'he_normal')(X)
@@ -180,6 +188,8 @@ class ResUnet:
         X = Add()([X, X_copy])
         X = Activation('relu')(X)
         
+        return X
+        
     def upsample_concat(self, x, skip):
         X = UpSampling2D((2,2))(x)
         merge = Concatenate()([X, skip])
@@ -193,7 +203,7 @@ class ResUnet:
         #Stage1
         conv_1 = Conv2D(16,3, activation = 'relu', padding='same', kernel_initializer='he_normal')(input_layer)
         conv_1 = BatchNormalization()(conv_1)
-        conv_1 = Conv2D(16,3, activation = 'relu', padding='same', kernel_initializer='he_normal')
+        conv_1 = Conv2D(16,3, activation = 'relu', padding='same', kernel_initializer='he_normal')(conv_1)
         conv_1 = BatchNormalization()(conv_1)  
         pool_1 = MaxPool2D((2,2))(conv_1)
         
@@ -246,4 +256,45 @@ def get_generators():
     return train_data, val_data
 
 
-model = ResUnet()
+
+def tversky(y_true, y_pred):
+    y_true_pos = K.flatten(y_true)
+    y_pred_pos = K.flatten(y_pred)
+    true_pos = K.sum(y_true_pos * y_pred_pos)
+    false_neg = K.sum(y_true_pos * (1-y_pred_pos))
+    false_pos = K.sum((1-y_true_pos)*y_pred_pos)
+    alpha = 0.7
+    return (true_pos + 1)/(true_pos + alpha*false_neg + (1-alpha)*false_pos + 1)
+
+
+def focal_tversky(y_true,y_pred):
+    y_true = tf.cast(y_true, tf.float32)
+    y_pred = tf.cast(y_pred, tf.float32)
+    
+    pt_1 = tversky(y_true, y_pred)
+    gamma = 0.75
+    return K.pow((1-pt_1), gamma)
+
+
+
+
+
+# adam = tf.keras.optimizers.Adam(lr = 0.01, epsilon = 0.1)
+
+# model = ResUnet()
+
+# model.model.compile(optimizer = adam, 
+#                   loss = focal_tversky, 
+#                   metrics = [tversky]
+#                  )
+
+# train_data, val_data = get_generators()
+
+# callbacks = create_callbacks()
+
+# h = model.model.fit(train_data, 
+#                   epochs = 60, 
+#                   validation_data = val_data,
+#                   callbacks = callbacks
+               
+#                  )
