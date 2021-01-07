@@ -10,7 +10,7 @@ import pydicom
 from tqdm import tqdm
 import multiprocessing
 from multiprocessing.pool import Pool, ThreadPool
-
+import matplotlib.pyplot as plt
 
 def clean_text(string):
     forbidden_symbols = ["*", ".", ",", "\"", "\\", "/", "|", "[", "]", ":", ";", " "]
@@ -19,6 +19,12 @@ def clean_text(string):
         
     return string.lower()
 
+
+def plot_image(dataset, figsize=(10,10)):
+    plt.figure(figsize=figsize)
+    plt.imshow(dataset.pixel_array, cmap = plt.cm.bone)
+    plt.show()
+    
 
 def get_data_from_DICOM(ds):
     
@@ -35,8 +41,8 @@ def get_data_from_DICOM(ds):
     instanceNumber = str(ds.get("InstanceNumber","0"))
     fileName = modality + "." + seriesInstanceUID + "." + instanceNumber + ".dcm"
     
-    attributes.extend(patientID,studyDate,studyDescription,seriesDescription,modality,studyInstanceUID,seriesInstanceUID,
-                      instanceNumber,fileName)
+    attributes.extend([patientID,studyDate,studyDescription,seriesDescription,modality,studyInstanceUID,seriesInstanceUID,
+                      instanceNumber,fileName])
     
     return attributes
             
