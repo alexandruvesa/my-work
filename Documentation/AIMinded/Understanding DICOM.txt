@@ -1,0 +1,4 @@
+https://towardsdatascience.com/understanding-dicom-bce665e62b72
+https://towardsdatascience.com/a-python-script-to-sort-dicom-files-f1623a7f40b8
+https://towardsdatascience.com/understanding-dicoms-835cd2e57d0b
+https://www.kaggle.com/gpreda/visualize-ct-dicom-data
