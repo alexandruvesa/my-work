@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Dec 26 23:15:16 2020
-
+ResUnet
+https://arxiv.org/pdf/1904.00592.pdf
 @author: Alex
 """
+
+
+
 import tensorflow as tf
 import numpy as np
 import cv2
@@ -15,6 +19,7 @@ from applications.Brain_MRI_Classification_Segmentation.models.classification_mo
 from applications.Brain_MRI_Classification_Segmentation.models.segmentation_models.ResUnet import ResUnet
 from applications.Brain_MRI_Classification_Segmentation.generators.classification_generator import get_classification_generators
 from applications.Brain_MRI_Classification_Segmentation.generators.DataGeneratorSegmentation import DataGeneratorSegmentation
+from applications.Brain_MRI_Classification_Segmentation.utils.loss_functions import tversky, focal_tversky
 
 
 
@@ -140,7 +145,25 @@ def train_classification_model(epochs = 1):
     report = classification_report(original, pred, labels=[0,1])
     
     print(accuracy, cm , report)
-        
+    
+    
+def train_segmentation_model(epochs = 1):
+    
+    model = ResUnet()
+    adam = tf.keras.optimizers.Adam(lr = 0.01, epsilon = 0.1)
+    model.model.compile(optimizer = adam, 
+                  loss = focal_tversky, 
+                  metrics = [tversky]
+                  )
+    train_data, val_data = get_data_segmentation()
+    callbacks = get_callbacks_segmentation_model()
+    model.model.fit(train_data, 
+                  epochs = 60, 
+                  validation_data = val_data,
+                  callbacks = callbacks
+               
+                  )
 
+train_segmentation_model()
     
 
