@@ -75,7 +75,7 @@ def sort_files(src_folder, dst_folder):
         studyDate = clean_text(ds.get("StudyDate", "NA"))
         studyDescription = clean_text(ds.get("StudyDescription", "NA"))
         seriesDescription = clean_text(ds.get("SeriesDescription", "NA"))
-       
+        
         # generate new, standardized file name
         modality = ds.get("Modality","NA")
         studyInstanceUID = ds.get("StudyInstanceUID","NA")
@@ -85,6 +85,9 @@ def sort_files(src_folder, dst_folder):
         
                    
         # uncompress files (using the gdcm package)
+        #DICOM files may have image compression performed 
+        #on them either during storage or during transfer via the DICOM receiver. 
+        #For example, at our institution, all DICOMs have JPEG2000 compression
         try:
             ds.decompress()
         except:
