@@ -142,3 +142,10 @@ class LunaDataset(Dataset):
         
         return (candidate_t, pos_t, candidate_info_tup.series_uid, torch.tensor(center_irc))
     
+lista = getCandidateInfoList()
+
+
+
+for i in range(140):
+    plt.imshow(ct_a[i])
+    plt.show()
