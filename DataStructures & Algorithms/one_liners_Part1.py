@@ -63,3 +63,7 @@ lista = []
 for row in db_rows:
     lista.append(dict(zip(columns_names,row)))
 print(time.time()-start)
+
+
+
+
