@@ -12,13 +12,13 @@ import os
 import tensorflow as tf
 import cv2
 
-DATA_PATH = r'C:\Users\alexandru.vesa\Desktop\Research\datasets\MTFL'
+DATA_PATH = r'E:\Alex Work\Datasets\MTFL'
 
 
-def prepare_data():
+def prepare_data(path = 'training.txt'):
     
 
-    train_data = pd.read_csv(os.path.join(DATA_PATH, 'training.txt'), sep=' ', header=None, skipinitialspace=True, nrows=10000)
+    train_data = pd.read_csv(os.path.join(DATA_PATH, path), sep=' ', header=None, skipinitialspace=True, nrows=10000)
     train_data.iloc[:, 0] = train_data.iloc[:, 0].apply(lambda s: s.replace('\\', '/'))
     train_data.iloc[:,0] = train_data.iloc[:,0].apply(lambda s: os.path.join(DATA_PATH,s))
     filenames = tf.constant(train_data.iloc[:,0].tolist())
@@ -39,14 +39,14 @@ def parse_function(filename,label):
     return {"x": image_resized}, label
     
 
-def input_dataset(is_eval = False):
-    filenames,labels = prepare_data() 
+def input_dataset(path = 'training.txt', is_eval = False):
+    filenames,labels = prepare_data(path) 
     dataset = tf.data.Dataset.from_tensor_slices((filenames,labels))
     dataset = dataset.map(parse_function)
     
     if is_eval:
-        dataset = dataset.batch(64)
+        dataset = dataset.batch(16)
     else:
-        dataset = dataset.repeat().shuffle(1000).batch(64)
+        dataset = dataset.repeat().shuffle(1000).batch(16)
         
     return dataset
