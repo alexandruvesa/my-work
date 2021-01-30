@@ -14,18 +14,10 @@ import cv2
 
 DATA_PATH = r'E:\Alex Work\Datasets\MTFL'
 
-
-<<<<<<< HEAD
-def prepare_data(mode = 'training.txt'):
-    
-
-    train_data = pd.read_csv(os.path.join(DATA_PATH, mode), sep=' ', header=None, skipinitialspace=True, nrows=10000)
-=======
 def prepare_data(path = 'training.txt'):
     
 
     train_data = pd.read_csv(os.path.join(DATA_PATH, path), sep=' ', header=None, skipinitialspace=True, nrows=10000)
->>>>>>> 1331ee190fada0568c335dc59bf2fcde79329888
     train_data.iloc[:, 0] = train_data.iloc[:, 0].apply(lambda s: s.replace('\\', '/'))
     train_data.iloc[:,0] = train_data.iloc[:,0].apply(lambda s: os.path.join(DATA_PATH,s))
     filenames = tf.constant(train_data.iloc[:,0].tolist())
@@ -48,18 +40,14 @@ def parse_function(filename,label):
     
     labels['nose'] = label[2:8:5]
     labels['left_mouth'] = label[3:9:5]
-    labels['right_mouth'] = label[4:10:5]
+    #labels['right_mouth'] = label[4:10:5]
     
     return image_resized,labels
     
 
-<<<<<<< HEAD
-def input_dataset(mode = 'training.txt',is_eval = False):
+
+def input_dataset(path='training.txt', is_eval = False):
     filenames,labels = prepare_data() 
-=======
-def input_dataset(path = 'training.txt', is_eval = False):
-    filenames,labels = prepare_data(path) 
->>>>>>> 1331ee190fada0568c335dc59bf2fcde79329888
     dataset = tf.data.Dataset.from_tensor_slices((filenames,labels))
     dataset = dataset.map(parse_function)
     
@@ -68,12 +56,8 @@ def input_dataset(path = 'training.txt', is_eval = False):
     if is_eval:
         dataset = dataset.batch(16)
     else:
-<<<<<<< HEAD
-        dataset = dataset.shuffle(1000).batch(64)
-=======
-        dataset = dataset.repeat().shuffle(1000).batch(16)
->>>>>>> 1331ee190fada0568c335dc59bf2fcde79329888
-        
+        dataset = dataset.shuffle(1000).cache().batch(64)
+      
     return dataset
 
 

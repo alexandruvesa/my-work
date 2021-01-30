@@ -13,6 +13,11 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 
+
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.compat.v1.Session(config=config)
+
 def base(input_layer):
   # Input layer
   #input_layer = tf.keras.layers.Input(shape = ( 40, 40, 3))
@@ -97,11 +102,11 @@ def final_model():
     backbone = base(input_layer)
     nose = nose_head(backbone)
     head = head_pose_head(backbone)
-    right_mouths = right_mouth(backbone)
+    #right_mouths = right_mouth(backbone)
     
     model = Model(
 			inputs=input_layer,
-			outputs=[nose,head,right_mouths],
+			outputs=[nose,head],
 			name="test")
 
     
@@ -116,7 +121,7 @@ model = final_model()
 losses = {
 	"nose": "mean_squared_error",
 	"left_mouth": "mean_squared_error",
-    "right_mouth":"mean_squared_error"
+
 }
 
 #lossWeights = {"nose": 1.0, "left_mouth": 0.5,  "right_mouth":0.8}
@@ -128,19 +133,19 @@ model.compile(optimizer = optimizer, loss = losses, metrics = ['accuracy'])
 
 dataset = input_dataset()
 
-dataset_eval = input_dataset(mode = 'testing.txt' ,is_eval = True)
+dataset_eval = input_dataset(path = 'testing.txt' ,is_eval = True)
 
-model.fit(dataset, epochs = 30, validation_data=dataset_eval)
+model.fit(dataset, epochs = 20)
 
 
 prediction = model.predict(dataset)
 
-predictiom_image_0_nose = prediction[0][0]
-prediction_image_0_head = prediction[1][0]
-prediction_image_0_head = prediction[2][0]
+predictiom_image_0_nose = prediction[0][1]
+prediction_image_0_head = prediction[1][1]
+#prediction_image_0_head = prediction[2][0]
 
 
-path = r'C:\Users\alexandru.vesa\Desktop\Research\datasets\MTFL\lfw_5590\Aaron_Eckhart_0001.jpg'   
+path = r'E:\Alex Work\Datasets\MTFL\AFLW\0002-image04733.jpg'   
 # image_string = tf.io.read_file(path)
 # image_decoded = tf.image.decode_jpeg(image_string, channels=3) # Channels needed because some test images are b/w
 # image_resized = tf.image.resize(image_decoded, [40, 40])
@@ -159,7 +164,7 @@ image_resized = np.reshape(image_resized, (120,120,1))
 plt.imshow(image_resized)
 plt.scatter(predictiom_image_0_nose[0]*120,predictiom_image_0_nose[1]*120,marker='x', color='red')
 plt.scatter(prediction_image_0_head[0]*120, prediction_image_0_head[1]*120,marker='x', color='blue')
-#plt.scatter(prediction_image_0_head[0]*120, prediction_image_0_head[1]*120, marker='x',color='yellow')
+plt.scatter(prediction_image_0_head[0]*120, prediction_image_0_head[1]*120, marker='x',color='yellow')
 
 plt.show()
 
