@@ -304,8 +304,8 @@ class SegNet(nn.Module):
 
      
 model = SegNet(3, 3) 
-x= torch.rand(1,3,512,256)
+x= torch.rand(1,3,256,256)
 y = model(x)
 import torchviz
-torchviz.make_dot(y)     
+torchviz.make_dot(y,params = dict(model.named_parameters()))     
         
